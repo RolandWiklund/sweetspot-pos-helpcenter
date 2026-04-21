@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sweetspot POS — Hjälpcenter</title>
+<meta name="description" content="Hjälpcenter för Sweetspot POS. Guider, FAQ, hårdvara och integrationer." />
+
+<!--
+====================================================================
+ SWEETSPOT POS – HJÄLPCENTER
+ Senast uppdaterad: 2026-04-18
+ ====================================================================
+
+ HUR DU UPPDATERAR INNEHÅLL:
+
+ 1) FAQ (vanligaste fall):
+    Scrolla ner till taggen <script id="faq-data">.
+    Varje fråga ligger i ett JSON-objekt så här:
+
+      { "kategori": "Kvitton",
+        "fraga":    "Hur skriver jag ut ett tidigare kvitto?",
+        "svar":     "Tryck på Backoffice ..." }
+
+    För att lägga till en ny fråga: kopiera ett befintligt objekt,
+    klistra in, ändra texten. Kom ihåg kommatecken mellan objekten.
+
+ 2) Guider (stora sektioner):
+    Hitta sektionen (t.ex. <section id="sektion-kvitton">) och
+    redigera direkt i HTML:en.
+
+ 3) Byta logotyp:
+    Sök i filen efter ordet LOGOTYP (står som en kommentar i HTML:en).
+    Ersätt SVG-blocket som kommer direkt efter med en img-tagg,
+    eller klistra in din egen SVG-kod.
+
+ 4) Byta färger / varumärke:
+    Färgvariabler ligger i :root högst upp i CSS. Ändra där så
+    slår det igenom hela sidan.
+
+ 5) Supportlänkar:
+    Sökord: "SUPPORT-KONFIG" i dokumentet.
+====================================================================
+-->
+
+<style>
+/* -------- SWEETSPOT BRAND VARIABLES -------- */
+:root {
+  --ss-yellow: #FFED4E;      /* Primär gul (från logotyp) */
+  --ss-yellow-soft: #FFF8B8; /* Ljus gul för bakgrunder */
+  --ss-beige: #F8F1E0;       /* Varm beige */
+  --ss-beige-dark: #EFE4CC;  /* Mörkare beige för kanter */
+  --ss-black: #1A1A1A;       /* Primär mörk */
+  --ss-gray-900: #2B2B2B;
+  --ss-gray-700: #4A4A4A;
+  --ss-gray-500: #767676;
+  --ss-gray-300: #D6D6D6;
+  --ss-gray-100: #F3F3F3;
+  --ss-white: #FFFFFF;
+  --ss-success: #1F7A3A;
+  --ss-accent: #FFED4E;
+
+  --radius-s: 8px;
+  --radius-m: 14px;
+  --radius-l: 22px;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 16px rgba(26,26,26,0.08);
+  --shadow-lg: 0 12px 32px rgba(26,26,26,0.12);
+
+  --maxw: 1240px;
+}
+
+/* -------- RESET & BASE -------- */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--ss-beige);
+  color: var(--ss-black);
+  line-height: 1.55;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4 { color: var(--ss-black); font-weight: 700; letter-spacing: -0.01em; margin-top: 0; }
+h1 { font-size: clamp(1.8rem, 3.5vw, 2.6rem); line-height: 1.15; }
+h2 { font-size: 1.75rem; margin: 2.5rem 0 1rem; line-height: 1.2; }
+h3 { font-size: 1.2rem; margin: 1.5rem 0 0.5rem; }
+p  { margin: 0 0 1rem; }
+a  { color: var(--ss-black); text-decoration: underline; text-decoration-color: var(--ss-yellow); text-underline-offset: 3px; }
+a:hover { text-decoration-thickness: 2px; }
+code, kbd { font-family: "SF Mono", Menlo, Consolas, monospace; background: var(--ss-gray-100); padding: 1px 6px; border-radius: 4px; font-size: 0.92em; }
+ol, ul { padding-left: 1.25rem; }
+li { margin-bottom: 0.35rem; }
+
+/* -------- HEADER -------- */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: var(--ss-white);
+  border-bottom: 1px solid var(--ss-beige-dark);
+  box-shadow: var(--shadow-sm);
+}
+.topbar-inner {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 14px 28px;
+  display: flex; align-items: center; gap: 20px;
+}
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ss-black); flex-shrink: 0; }
+.brand-logo { width: 38px; height: 38px; flex-shrink: 0; }
+.brand-name { font-weight: 800; font-size: 1.05rem; letter-spacing: -0.01em; }
+.brand-tag { color: var(--ss-gray-500); font-size: 0.82rem; margin-left: 2px; }
+
+.search-wrap { flex: 1; position: relative; max-width: 560px; margin: 0 auto; }
+.search-input {
+  width: 100%;
+  padding: 12px 16px 12px 44px;
+  border: 1.5px solid var(--ss-gray-300);
+  border-radius: 999px;
+  font-size: 15px;
+  background: var(--ss-white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23767676' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E") no-repeat 16px center;
+  transition: all 0.15s ease;
+  outline: none;
+}
+.search-input:focus { border-color: var(--ss-black); box-shadow: 0 0 0 3px var(--ss-yellow); }
+.search-results {
+  display: none;
+  position: absolute; top: calc(100% + 8px); left: 0; right: 0;
+  background: var(--ss-white);
+  border: 1px solid var(--ss-gray-300);
+  border-radius: var(--radius-m);
+  box-shadow: var(--shadow-lg);
+  max-height: 70vh; overflow-y: auto;
+  z-index: 60;
+}
+.search-results.active { display: block; }
+.search-result-item {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--ss-gray-100);
+  cursor: pointer;
+  text-decoration: none; color: var(--ss-black); display: block;
+}
+.search-result-item:hover, .search-result-item:focus { background: var(--ss-beige); }
+.search-result-item .sr-cat { display: inline-block; font-size: 0.72rem; background: var(--ss-yellow); color: var(--ss-black); padding: 2px 8px; border-radius: 4px; font-weight: 600; margin-bottom: 4px; }
+.search-result-item .sr-title { font-weight: 600; margin: 2px 0; font-size: 0.95rem; }
+.search-result-item .sr-snippet { font-size: 0.85rem; color: var(--ss-gray-700); line-height: 1.4; }
+.search-result-item mark { background: var(--ss-yellow); padding: 0 2px; border-radius: 2px; }
+.search-empty { padding: 18px; color: var(--ss-gray-500); text-align: center; font-size: 0.9rem; }
+
+.lang-switch {
+  display: inline-flex; align-items: center;
+  border: 1px solid var(--ss-beige-dark);
+  border-radius: 999px;
+  padding: 4px; gap: 2px;
+  background: var(--ss-white);
+  font-size: 0.78rem; font-weight: 600;
+  margin-right: 4px;
+}
+.lang-switch a {
+  padding: 4px 10px; border-radius: 999px;
+  text-decoration: none; color: var(--ss-gray-700);
+  transition: all 0.1s ease;
+}
+.lang-switch a.active { background: var(--ss-black); color: var(--ss-white); }
+.lang-switch a:hover:not(.active) { background: var(--ss-beige); color: var(--ss-black); }
+
+.topbar-cta {
+  background: var(--ss-black); color: var(--ss-white);
+  padding: 10px 18px; border-radius: 999px;
+  text-decoration: none; font-weight: 600; font-size: 0.9rem;
+  white-space: nowrap;
+  transition: transform 0.1s ease;
+}
+.topbar-cta:hover { transform: translateY(-1px); color: var(--ss-white); text-decoration: none; }
+
+/* -------- HERO -------- */
+.hero {
+  background: linear-gradient(180deg, var(--ss-yellow) 0%, var(--ss-yellow-soft) 100%);
+  padding: 64px 28px 72px;
+  text-align: center;
+  border-bottom: 1px solid var(--ss-beige-dark);
+}
+.hero-inner { max-width: 760px; margin: 0 auto; }
+.hero h1 { margin-bottom: 12px; }
+.hero p { font-size: 1.1rem; color: var(--ss-gray-700); margin-bottom: 32px; }
+.hero .search-wrap { max-width: 620px; }
+.hero .search-input { padding: 16px 20px 16px 52px; font-size: 16px; background-size: 20px; background-position: 20px center; }
+.hero-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 22px; }
+.hero-chip {
+  background: var(--ss-white);
+  border: 1px solid var(--ss-beige-dark);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  text-decoration: none;
+  color: var(--ss-gray-900);
+  transition: all 0.15s ease;
+}
+.hero-chip:hover { background: var(--ss-black); color: var(--ss-white); text-decoration: none; border-color: var(--ss-black); }
+
+/* -------- LAYOUT -------- */
+.layout {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 32px 28px 80px;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 40px;
+}
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; padding: 24px 20px 60px; }
+  .sidebar { position: static; order: 2; }
+}
+
+/* -------- SIDEBAR -------- */
+.sidebar {
+  position: sticky;
+  top: 92px;
+  align-self: start;
+  max-height: calc(100vh - 110px);
+  overflow-y: auto;
+  padding-right: 8px;
+}
+.sidebar-title {
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--ss-gray-500); font-weight: 700;
+  margin: 0 0 12px 12px;
+}
+.sidebar ul { list-style: none; padding: 0; margin: 0 0 24px; }
+.sidebar li { margin: 0; }
+.sidebar a {
+  display: block;
+  padding: 9px 12px;
+  border-radius: var(--radius-s);
+  text-decoration: none;
+  color: var(--ss-gray-900);
+  font-size: 0.92rem;
+  font-weight: 500;
+  transition: background 0.1s ease;
+}
+.sidebar a:hover { background: var(--ss-beige-dark); }
+.sidebar a.active { background: var(--ss-black); color: var(--ss-white); font-weight: 600; }
+
+/* -------- CONTENT -------- */
+.content { min-width: 0; }
+section.block {
+  background: var(--ss-white);
+  border-radius: var(--radius-l);
+  padding: 36px 40px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--ss-beige-dark);
+}
+@media (max-width: 600px) { section.block { padding: 24px 22px; } }
+
+.section-eyebrow {
+  display: inline-block;
+  background: var(--ss-yellow);
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Guide cards */
+.guide-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin: 16px 0;
+}
+.guide-card {
+  background: var(--ss-beige);
+  border: 1px solid var(--ss-beige-dark);
+  border-radius: var(--radius-m);
+  padding: 18px 20px;
+  text-decoration: none;
+  color: var(--ss-black);
+  transition: all 0.15s ease;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.guide-card:hover { background: var(--ss-yellow); border-color: var(--ss-yellow); transform: translateY(-2px); text-decoration: none; }
+.guide-card h4 { margin: 0; font-size: 1rem; }
+.guide-card p { margin: 0; font-size: 0.88rem; color: var(--ss-gray-700); }
+.guide-card .arrow { margin-top: 6px; font-weight: 700; }
+
+/* Step boxes */
+.steps {
+  counter-reset: stepcount;
+  list-style: none;
+  padding: 0;
+  margin: 18px 0;
+}
+.steps li {
+  counter-increment: stepcount;
+  position: relative;
+  padding: 14px 18px 14px 60px;
+  background: var(--ss-beige);
+  border-radius: var(--radius-m);
+  margin-bottom: 10px;
+  border: 1px solid var(--ss-beige-dark);
+}
+.steps li::before {
+  content: counter(stepcount);
+  position: absolute;
+  top: 12px; left: 14px;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--ss-black);
+  color: var(--ss-yellow);
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.95rem;
+}
+
+/* Info/tip callouts */
+.callout {
+  border-left: 4px solid var(--ss-black);
+  background: var(--ss-yellow-soft);
+  padding: 14px 18px;
+  border-radius: var(--radius-s);
+  margin: 18px 0;
+  font-size: 0.95rem;
+}
+.callout.tip { border-color: var(--ss-success); background: #EAF6EC; }
+.callout.warn { border-color: #D87B1B; background: #FFF3E5; }
+.callout strong { display: block; margin-bottom: 4px; text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.05em; }
+
+/* Tables */
+table.info { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 0.93rem; }
+table.info th, table.info td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--ss-beige-dark); vertical-align: top; }
+table.info th { background: var(--ss-beige); font-weight: 600; }
+
+/* FAQ */
+.faq-filter { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.faq-filter button {
+  background: var(--ss-white);
+  border: 1px solid var(--ss-beige-dark);
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.1s ease;
+}
+.faq-filter button:hover { border-color: var(--ss-black); }
+.faq-filter button.active { background: var(--ss-black); color: var(--ss-white); border-color: var(--ss-black); }
+
+.faq-item {
+  border: 1px solid var(--ss-beige-dark);
+  background: var(--ss-beige);
+  border-radius: var(--radius-m);
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: box-shadow 0.15s ease;
+}
+.faq-item[open] { box-shadow: var(--shadow-sm); background: var(--ss-white); }
+.faq-item summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 16px 48px 16px 20px;
+  font-weight: 600;
+  font-size: 1rem;
+  position: relative;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after {
+  content: "+";
+  position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+  font-size: 1.4rem; color: var(--ss-gray-500); font-weight: 400;
+  transition: transform 0.15s ease;
+}
+.faq-item[open] summary::after { content: "−"; color: var(--ss-black); }
+.faq-item .faq-body { padding: 0 20px 18px; color: var(--ss-gray-900); }
+.faq-item .faq-body p:last-child { margin-bottom: 0; }
+.faq-cat { display: inline-block; background: var(--ss-yellow); padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 600; margin-right: 8px; vertical-align: middle; }
+
+/* Hardware grid */
+.hw-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 16px 0; }
+.hw-card {
+  background: var(--ss-beige);
+  padding: 16px;
+  border-radius: var(--radius-m);
+  border: 1px solid var(--ss-beige-dark);
+}
+.hw-card h4 { font-size: 0.98rem; margin: 0 0 6px; }
+.hw-card .hw-meta { font-size: 0.8rem; color: var(--ss-gray-500); margin-bottom: 6px; }
+.hw-card p { font-size: 0.88rem; margin: 0; }
+
+/* Footer */
+.footer {
+  background: var(--ss-black);
+  color: var(--ss-beige);
+  padding: 56px 28px;
+  margin-top: 60px;
+}
+.footer-inner { max-width: var(--maxw); margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
+@media (max-width: 700px) { .footer-inner { grid-template-columns: 1fr; gap: 30px; } }
+.footer h4 { color: var(--ss-yellow); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+.footer a { color: var(--ss-beige); text-decoration: none; display: block; padding: 4px 0; font-size: 0.94rem; }
+.footer a:hover { color: var(--ss-yellow); }
+.footer-about p { color: var(--ss-gray-500); font-size: 0.88rem; max-width: 360px; }
+.footer-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.footer-brand span { color: var(--ss-white); font-weight: 700; font-size: 1.1rem; }
+
+/* Hidden helpers */
+.hide { display: none !important; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+mark.hit { background: var(--ss-yellow); padding: 0 2px; border-radius: 2px; }
+
+/* Print friendly */
+@media print {
+  .topbar, .sidebar, .hero-chips, .footer, .faq-filter { display: none; }
+  .layout { grid-template-columns: 1fr; }
+  section.block { box-shadow: none; border: none; padding: 0; page-break-inside: avoid; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= TOP BAR ================= -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#start">
+      <!-- LOGOTYP: Byt ut SVG:n mot en <img src="logotyp.png" class="brand-logo"> om du vill lägga in er riktiga logotypfil -->
+      <svg class="brand-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Sweetspot">
+        <rect x="0" y="0" width="100" height="100" rx="22" fill="#FFED4E"/>
+        <path d="M56 22 a22 22 0 1 1 0 44 Z" fill="#1A1A1A"/>
+        <path d="M44 38 a22 22 0 1 0 0 44 Z" fill="#1A1A1A"/>
+        <circle cx="64" cy="74" r="6" fill="#1A1A1A"/>
+      </svg>
+      <div>
+        <div class="brand-name">Sweetspot POS</div>
+        <div class="brand-tag">Hjälpcenter</div>
+      </div>
+    </a>
+
+    <div class="search-wrap" id="topSearchWrap">
+      <label class="sr-only" for="topSearch">Sök i hjälpcentret</label>
+      <input id="topSearch" class="search-input" type="search" placeholder="Sök i hjälpcentret…" autocomplete="off" />
+      <div class="search-results" id="topSearchResults" role="listbox"></div>
+    </div>
+
+    <div class="lang-switch" aria-label="Språk">
+      <a href="./" class="active" aria-current="page">SV</a>
+      <a href="en/" title="Switch to English">EN</a>
+    </div>
+
+    <!-- SUPPORT-KONFIG: primär supportknapp i headern -->
+    <a class="topbar-cta" href="#support">Få hjälp</a>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero" id="start">
+  <div class="hero-inner">
+    <h1>Hur kan vi hjälpa dig idag?</h1>
+    <p>Guider, FAQ och praktisk hjälp för Sweetspot POS — allt samlat på en plats.</p>
+    <div class="search-wrap" id="heroSearchWrap">
+      <label class="sr-only" for="heroSearch">Sök i hjälpcentret</label>
+      <input id="heroSearch" class="search-input" type="search" placeholder="T.ex. ”skriv ut tidigare kvitto”, ”kortterminal”, ”återköp”…" autocomplete="off" />
+      <div class="search-results" id="heroSearchResults"></div>
+    </div>
+    <div class="hero-chips">
+      <a class="hero-chip" href="#sektion-kvitton">Skriv ut tidigare kvitto</a>
+      <a class="hero-chip" href="#sektion-sales">Ta betalt</a>
+      <a class="hero-chip" href="#sektion-returns">Göra återköp</a>
+      <a class="hero-chip" href="#sektion-eod">Dagsavslut</a>
+      <a class="hero-chip" href="#sektion-hardware">Rekommenderad hårdvara</a>
+      <a class="hero-chip" href="#sektion-faq">Vanliga frågor</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MAIN LAYOUT ================= -->
+<div class="layout">
+
+  <!-- -------- SIDEBAR -------- -->
+  <aside class="sidebar" aria-label="Innehållsförteckning">
+    <div class="sidebar-title">Kom igång</div>
+    <ul>
+      <li><a href="#sektion-start">Välkommen</a></li>
+      <li><a href="#sektion-getting-started">Installera & logga in</a></li>
+      <li><a href="#sektion-overview">Översikt av kassan</a></li>
+    </ul>
+
+    <div class="sidebar-title">I kassan</div>
+    <ul>
+      <li><a href="#sektion-sales">Sälja & ta betalt</a></li>
+      <li><a href="#sektion-discounts">Rabatter</a></li>
+      <li><a href="#sektion-kvitton">Kvitton & kvittokopior</a></li>
+      <li><a href="#sektion-returns">Retur & återköp</a></li>
+      <li><a href="#sektion-eod">Dagsavslut (EOD)</a></li>
+    </ul>
+
+    <div class="sidebar-title">Admin & backoffice</div>
+    <ul>
+      <li><a href="#sektion-backoffice">Backoffice i kassan</a></li>
+      <li><a href="#sektion-products">Produkter & kategorier</a></li>
+      <li><a href="#sektion-stock">Lagerhantering</a></li>
+      <li><a href="#sektion-users">Användare & behörigheter</a></li>
+      <li><a href="#sektion-reports">Rapporter (X-rapport)</a></li>
+    </ul>
+
+    <div class="sidebar-title">Utrustning & integrationer</div>
+    <ul>
+      <li><a href="#sektion-hardware">Rekommenderad hårdvara</a></li>
+      <li><a href="#sektion-terminals">Kortterminaler</a></li>
+      <li><a href="#sektion-integrations">Integrationer</a></li>
+    </ul>
+
+    <div class="sidebar-title">Övrigt</div>
+    <ul>
+      <li><a href="#sektion-faq">FAQ — vanliga frågor</a></li>
+      <li><a href="#sektion-manuals">Djupdyk & PDF-manualer</a></li>
+      <li><a href="#support">Kontakta support</a></li>
+    </ul>
+  </aside>
+
+  <!-- -------- MAIN CONTENT -------- -->
+  <main class="content">
+
+    <!-- ============ VÄLKOMMEN ============ -->
+    <section id="sektion-start" class="block">
+      <span class="section-eyebrow">Välkommen</span>
+      <h2 style="margin-top:4px;">Sweetspot POS — ditt kassasystem, enkelt förklarat</h2>
+      <p>
+        Välkommen till Sweetspot POS Hjälpcenter. Här hittar du allt du behöver för att komma igång, använda kassan i det dagliga arbetet, hantera lager och administration, samt koppla in kringutrustning och integrationer.
+        Använd sökfältet ovan för att snabbt hitta det du letar efter, eller klicka dig runt i menyn till vänster.
+      </p>
+
+      <div class="guide-grid" style="margin-top:18px;">
+        <a class="guide-card" href="#sektion-getting-started">
+          <h4>🚀 Installera & logga in</h4>
+          <p>Första gången — ladda ner appen, logga in och välj kassa.</p>
+          <span class="arrow">→</span>
+        </a>
+        <a class="guide-card" href="#sektion-sales">
+          <h4>💳 Sälja & ta betalt</h4>
+          <p>Lägg produkter på kvittot, ge rabatter och slutför köp.</p>
+          <span class="arrow">→</span>
+        </a>
+        <a class="guide-card" href="#sektion-kvitton">
+          <h4>🧾 Kvitton & kvittokopior</h4>
+          <p>Skriv ut ett tidigare kvitto, skicka via e-post och mer.</p>
+          <span class="arrow">→</span>
+        </a>
+        <a class="guide-card" href="#sektion-returns">
+          <h4>↩️ Retur & återköp</h4>
+          <p>Hantera returer mot kvitto eller manuellt.</p>
+          <span class="arrow">→</span>
+        </a>
+        <a class="guide-card" href="#sektion-eod">
+          <h4>📊 Dagsavslut (EOD)</h4>
+          <p>Räkna kassan, sätt in till bank och stäm av.</p>
+          <span class="arrow">→</span>
+        </a>
+        <a class="guide-card" href="#sektion-hardware">
+          <h4>🖨️ Hårdvara</h4>
+          <p>Rekommenderade iPads, skrivare, terminaler och skannrar.</p>
+          <span class="arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ============ INSTALLERA & LOGGA IN ============ -->
+    <section id="sektion-getting-started" class="block">
+      <span class="section-eyebrow">Kom igång</span>
+      <h2 style="margin-top:4px;">Installera och logga in för första gången</h2>
+      <p>Sweetspot POS körs på iPad eller iPhone. Följ stegen nedan första gången du sätter upp en kassa.</p>
+
+      <h3>1. Ladda ner appen</h3>
+      <ol class="steps">
+        <li>Öppna App Store på din iPad eller iPhone.</li>
+        <li>Sök efter <strong>ExtendaGO POS</strong> och installera appen. (Sweetspot POS körs ovanpå ExtendaGO:s POS-app.)</li>
+        <li>Vänta tills nedladdningen är klar och öppna appen.</li>
+      </ol>
+
+      <h3>2. Logga in</h3>
+      <ol class="steps">
+        <li>Ange de inloggningsuppgifter du fått av Sweetspot när du startade ditt konto.</li>
+        <li>Välj rätt <strong>butik</strong> (om ni har flera).</li>
+        <li>Välj rätt <strong>kassa</strong> (register) — varje iPad hör vanligtvis till en specifik kassa.</li>
+      </ol>
+
+      <h3>3. Välj kassör och ange växel</h3>
+      <ol class="steps">
+        <li>Välj den inloggade kassörens namn (eller ange PIN-kod om ni kräver det).</li>
+        <li>Ange <strong>kontantväxel</strong> — det vill säga det belopp som finns i kassalådan när dagen börjar.</li>
+        <li>Bekräfta och du kommer till försäljningsvyn.</li>
+      </ol>
+
+      <div class="callout tip">
+        <strong>Tips</strong>
+        Om appen visar röd statusruta vid skrivar- eller terminalsymbolen i toppmenyn — gå till <em>Inställningar → Skrivare</em> respektive <em>Inställningar → Terminaler</em> och koppla på rätt utrustning. Se <a href="#sektion-hardware">Hårdvara</a>.
+      </div>
+    </section>
+
+    <!-- ============ ÖVERSIKT ============ -->
+    <section id="sektion-overview" class="block">
+      <span class="section-eyebrow">Översikt</span>
+      <h2 style="margin-top:4px;">Så är försäljningsvyn uppbyggd</h2>
+      <p>När du är inloggad möts du av försäljningsvyn (<em>Sales window</em>). Här är de viktigaste elementen:</p>
+
+      <table class="info">
+        <thead><tr><th>Element</th><th>Funktion</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Backoffice</strong> (uppe till vänster)</td><td>Öppnar kassans administrationsvy (försäljningsstatistik, produkter, lager, inställningar).</td></tr>
+          <tr><td><strong>Synkroniseringsikon</strong></td><td>Visar om kassan är online och synkroniserad med molnet.</td></tr>
+          <tr><td><strong>Terminalstatus</strong></td><td>Visar om betalterminalen är ansluten.</td></tr>
+          <tr><td><strong>Profil</strong></td><td>Visar inloggad kassör. Här loggar du ut användaren.</td></tr>
+          <tr><td><strong>Öppna kassalåda</strong></td><td>Öppnar den fysiska kassalådan utan att påbörja ett köp.</td></tr>
+          <tr><td><strong>Sökfält</strong></td><td>Sök efter produkter i sortimentet.</td></tr>
+          <tr><td><strong>Produkt- och kategoriraster</strong></td><td>Dina produkter sorterade i kategorier.</td></tr>
+          <tr><td><strong>Kvittovy (höger)</strong></td><td>Visar produkterna som är tillagda på aktuellt köp.</td></tr>
+          <tr><td><strong>Rabatt</strong></td><td>Ger rabatt på markerad produkt eller hela köpet.</td></tr>
+          <tr><td><strong>Retur</strong></td><td>Aktiverar returläge (produkter läggs till som minusrader).</td></tr>
+          <tr><td><strong>Manuell rad</strong></td><td>Lägger till en rad med fritt pris, för produkter som saknas i sortimentet.</td></tr>
+          <tr><td><strong>Parkera köp</strong></td><td>Sparar köpet och gör det möjligt att plocka fram igen senare.</td></tr>
+          <tr><td><strong>Cancel / Pay</strong></td><td>Röd knapp avbryter köpet helt, grön knapp går vidare till betalning.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============ SÄLJA & BETALA ============ -->
+    <section id="sektion-sales" class="block">
+      <span class="section-eyebrow">I kassan</span>
+      <h2 style="margin-top:4px;">Sälja produkter och ta betalt</h2>
+
+      <h3>Lägg till produkter på kvittot</h3>
+      <ol class="steps">
+        <li>Tryck på en produkt i produktrastret, eller sök fram den i sökfältet. Alternativt — skanna streckkoden.</li>
+        <li>Om produkten har varianter (storlek, färg etc.) — välj rätt variant.</li>
+        <li>Produkten läggs till i kvittovyn till höger. Tryck på den där för att ändra antal, rabatt eller variant.</li>
+      </ol>
+
+      <h3>Lägg till en manuell produkt</h3>
+      <p>Om en kund vill köpa något som inte finns i sortimentet, tryck på <strong>manuell rad</strong> och ange beskrivning, pris och moms. Perfekt för tillfälliga eller unika artiklar.</p>
+
+      <h3>Ta betalt</h3>
+      <ol class="steps">
+        <li>Tryck på den gröna <strong>Pay</strong>-knappen.</li>
+        <li>Välj betalmetod — kort, kontant, presentkort, faktura, MobilePay m.fl. (beroende på er setup).</li>
+        <li>Följ anvisningen för vald betalmetod. Vid kortbetalning skickas beloppet till kortterminalen.</li>
+        <li>Kvittot skrivs ut automatiskt på kvittoskrivaren när betalningen är godkänd.</li>
+      </ol>
+
+      <h3>Parkera ett pågående köp</h3>
+      <p>Om en kund behöver vänta (t.ex. hämta en vara från bilen), tryck på <strong>Park</strong>-knappen. Du kan nu expedition nästa kund. Plocka fram det parkerade köpet igen från parkeringslistan.</p>
+
+      <h3>Dela upp en nota</h3>
+      <p>I hospitality/restaurang kan du dela upp ett köp mellan flera personer. Tryck på <strong>Share bill</strong> och markera vilka rader som ska hamna på respektive del.</p>
+    </section>
+
+    <!-- ============ RABATTER ============ -->
+    <section id="sektion-discounts" class="block">
+      <span class="section-eyebrow">I kassan</span>
+      <h2 style="margin-top:4px;">Ge rabatt</h2>
+      <p>Du kan lägga till rabatt på en enskild produkt eller på hela kvittot.</p>
+
+      <h3>Rabatt på en produkt</h3>
+      <ol class="steps">
+        <li>Tryck på produkten i kvittovyn.</li>
+        <li>Välj <strong>procentrabatt</strong>, <strong>prisrabatt</strong> eller <strong>sätt ett nytt pris</strong>.</li>
+        <li>Ange belopp och (valfritt) en anledning till rabatten.</li>
+        <li>Tryck <em>OK</em> — rabatten visas direkt i kvittovyn.</li>
+      </ol>
+
+      <h3>Rabatt på hela kvittot</h3>
+      <ol class="steps">
+        <li>Tryck på <strong>Rabatt</strong>-knappen i verktygsraden.</li>
+        <li>Välj rabattyp och belopp.</li>
+        <li>Rabatten appliceras på alla rader som är rabattberättigade.</li>
+      </ol>
+
+      <div class="callout">
+        <strong>Bra att veta</strong>
+        Om en rabatt kommer från en kampanj (markerad som <em>Markdown</em>) kan den varken ändras eller tas bort i kassan. Kampanjer hanteras i Backoffice på webben.
+      </div>
+    </section>
+
+    <!-- ============ KVITTON ============ -->
+    <section id="sektion-kvitton" class="block">
+      <span class="section-eyebrow">Kvitton</span>
+      <h2 style="margin-top:4px;">Kvitton och kvittokopior</h2>
+
+      <h3 id="skriv-ut-tidigare-kvitto">Skriva ut ett kvitto för ett tidigare köp</h3>
+      <p>Det vanligaste sättet att få en kvittokopia direkt från kassamiljön — till exempel när en kund ringer och efterfrågar ett kvitto på ett tidigare köp.</p>
+      <ol class="steps">
+        <li>Tryck på <strong>Backoffice</strong>-knappen uppe i vänstra hörnet i försäljningsvyn.</li>
+        <li>Gå till <strong>Sale</strong> (Försäljning) i menyn till vänster.</li>
+        <li>Välj fliken <strong>Orders</strong> (Ordrar). Där listas alla genomförda försäljningar sorterade efter datum. Använd <em>Date</em>-knappen uppe till höger om du vill filtrera på period.</li>
+        <li>Tryck på den order som du vill skriva ut — du ser då vad som såldes och hur det betalades.</li>
+        <li>Tryck på <strong>skrivarikonen</strong> till höger om ordern för att skriva ut en kvittokopia, eller på <strong>brevikonen</strong> (Order) för att skicka kvittot via e-post.</li>
+      </ol>
+      <div class="callout tip">
+        <strong>Tips</strong>
+        Om skrivarikonen inte syns — kontrollera att kassörens roll (Management / Owner / Staff) har behörighet att se <em>sales history</em> under <em>Users → Permissions</em>.
+      </div>
+
+      <h3>Skicka kvitto via e-post eller SMS</h3>
+      <p>I själva betalningsvyn kan du ange en e-postadress/telefonnummer innan du slutför köpet — då skickas kvittot digitalt. Samma sak görs i efterhand via Backoffice → Sale → Orders som ovan.</p>
+
+      <h3>Pro forma-kvitto</h3>
+      <p>Behöver du skriva ut ett preliminärt kvitto (till exempel till ett bord på en restaurang som ännu inte betalat)? Använd <strong>Print bill</strong>-knappen. Detta är bara ett underlag — inte ett kvitto.</p>
+
+      <h3>Cachade kvitton (skrivare ur drift)</h3>
+      <p>Om kvittoskrivaren är offline när ett köp slutförs, sparas kvittot i en utskriftskö. När skrivaren är tillbaka visas ett rött märke på skrivarikonen — tryck på ikonen och välj <strong>Print cached receipts</strong> för att skriva ut.</p>
+    </section>
+
+    <!-- ============ RETURER ============ -->
+    <section id="sektion-returns" class="block">
+      <span class="section-eyebrow">I kassan</span>
+      <h2 style="margin-top:4px;">Retur och återköp</h2>
+
+      <h3>Retur mot kvitto (rekommenderat)</h3>
+      <p>Det är alltid bäst att göra retur mot kundens ursprungliga kvitto — då får du korrekt pris och momssats automatiskt.</p>
+      <ol class="steps">
+        <li>Tryck på <strong>Return</strong>-knappen (produkterna i kvittovyn visas nu i rött = returläge).</li>
+        <li>Skanna QR-koden på kundens kvitto, eller skriv in kvittonumret manuellt.</li>
+        <li>Välj de rader som ska returneras.</li>
+        <li>Fyll i <em>Reason for return</em> (anledning).</li>
+        <li>Tryck på <strong>Tender</strong> och välj hur kunden ska få tillbaka pengarna (samma betalsätt som köpet brukar vara standard).</li>
+      </ol>
+
+      <h3>Manuell retur (utan kvitto)</h3>
+      <p>Gör så här bara om du inte kan hitta kundens originalkvitto:</p>
+      <ol class="steps">
+        <li>Tryck på <strong>Return</strong>.</li>
+        <li>Lägg till produkten som ska returneras — eller tryck på manuell rad om produkten saknas i sortimentet.</li>
+        <li>Ange anledning till returen.</li>
+        <li>Genomför returbetalningen (kontant eller åter till kort).</li>
+      </ol>
+
+      <div class="callout warn">
+        <strong>Viktigt</strong>
+        Så länge du är i returläge visas alla priser som minus. Tryck på Return-knappen igen för att lämna returläget innan du kan göra en ny vanlig försäljning.
+      </div>
+    </section>
+
+    <!-- ============ DAGSAVSLUT ============ -->
+    <section id="sektion-eod" class="block">
+      <span class="section-eyebrow">I kassan</span>
+      <h2 style="margin-top:4px;">Dagsavslut (End of Day / EOD)</h2>
+      <p>Vid arbetsdagens slut stämmer ni av kassan — räknar kontanter, sätter in till bank och bekräftar totalen.</p>
+
+      <ol class="steps">
+        <li>Tryck på <strong>EOD</strong>-knappen i försäljningsvyn.</li>
+        <li>Räkna upp kontanterna i kassalådan och ange beloppet i <strong>Cash in register</strong>.</li>
+        <li>Ange belopp som sätts in till bank under <strong>Deposit to bank</strong> (lämnar du växelkassa kvar, dras den av från insättningen).</li>
+        <li>Bekräfta kortbetalningssumman från terminalens dagsrapport.</li>
+        <li>Tryck <strong>Confirm</strong> — systemet räknar ut om det blev <em>balance match</em> eller <em>balance mismatch</em>.</li>
+      </ol>
+
+      <div class="callout">
+        <strong>Tips</strong>
+        Vid <em>balance mismatch</em> — kontrollera att du räknat rätt, eller kolla efter ospårade kontantuttag/insättningar under dagen. Systemet loggar diffen för revision.
+      </div>
+
+      <h3>X-rapport (ögonblicksbild under dagen)</h3>
+      <p>Du kan när som helst ta ut en <strong>X-rapport</strong> via Backoffice → Reports. Den visar försäljning, retur, rabatter och kontantstatus fram till aktuell tidpunkt utan att stänga dagen.</p>
+    </section>
+
+    <!-- ============ BACKOFFICE ============ -->
+    <section id="sektion-backoffice" class="block">
+      <span class="section-eyebrow">Admin</span>
+      <h2 style="margin-top:4px;">Backoffice i kassan</h2>
+      <p>Backoffice i kassa-appen låter dig hantera produkter, lager, användare och inställningar direkt på iPad:en. Många funktioner finns även i webb-backoffice (<a href="https://wbo-etail.wallmob.com/login" target="_blank" rel="noopener">wbo-etail.wallmob.com</a>) och där är de ofta enklare att jobba med på större skärm.</p>
+
+      <div class="guide-grid">
+        <a class="guide-card" href="#sektion-products"><h4>Produkter & kategorier</h4><p>Lägg till, redigera och ta bort artiklar.</p><span class="arrow">→</span></a>
+        <a class="guide-card" href="#sektion-stock"><h4>Lagerhantering</h4><p>Fyll på, ta bort och inventera.</p><span class="arrow">→</span></a>
+        <a class="guide-card" href="#sektion-users"><h4>Användare</h4><p>Roller, PIN-koder och behörigheter.</p><span class="arrow">→</span></a>
+        <a class="guide-card" href="#sektion-reports"><h4>Rapporter</h4><p>X-rapport och försäljningsstatistik.</p><span class="arrow">→</span></a>
+      </div>
+
+      <h3>Navigera till Backoffice</h3>
+      <ol class="steps">
+        <li>Tryck på <strong>Backoffice</strong>-knappen i övre vänstra hörnet i försäljningsvyn.</li>
+        <li>Du kommer till en menyvy med alla admin-funktioner: Home, Sale, KPI, Inventory, Stock, Reports, Users, Settings.</li>
+        <li>Tryck på <strong>Sales window</strong>-knappen högst upp för att gå tillbaka till kassan igen.</li>
+      </ol>
+    </section>
+
+    <!-- ============ PRODUKTER ============ -->
+    <section id="sektion-products" class="block">
+      <span class="section-eyebrow">Admin</span>
+      <h2 style="margin-top:4px;">Produkter och kategorier</h2>
+
+      <h3>Lägg till en ny produkt</h3>
+      <ol class="steps">
+        <li>Gå till <strong>Backoffice → Inventory → Products</strong> och tryck på plusikonen (+).</li>
+        <li>Fyll i namn, (valfritt) beskrivning, inköpspris exkl. moms och försäljningspris inkl. moms.</li>
+        <li>Ange lagersaldo.</li>
+        <li>(Valfritt) Lägg till varianter — t.ex. storlek eller färg.</li>
+        <li>(Valfritt) Koppla produkten till en eller flera kategorier under <em>Add categories</em>. Utan kategori hamnar den under <em>Other</em>.</li>
+        <li>(Valfritt) Lägg till en produktbild.</li>
+        <li>Tryck <strong>Add product</strong>.</li>
+      </ol>
+
+      <h3>Redigera eller ta bort en produkt</h3>
+      <p>Tryck på pennikonen till höger om en produkt för att öppna redigeringsläget. När du är klar — tryck <strong>Edit product</strong>. Vill du ta bort produkten helt, tryck på den röda <strong>Remove</strong>-knappen.</p>
+
+      <div class="callout warn">
+        <strong>Observera</strong>
+        När du tar bort en produkt försvinner den ur alla butiker som har den i sortimentet. Finns försäljningshistorik kopplad till produkten rekommenderar vi istället att arkivera den (ta bort från hyllkategorin men låt grunddata finnas kvar).
+      </div>
+
+      <h3>Kategorier</h3>
+      <p>Skapa kategorier via <em>Backoffice → Inventory → Categories → Add category</em>. Kategorier kan vara i flera nivåer — välj en befintlig kategori som <em>Top-category</em> när du skapar en underkategori.</p>
+    </section>
+
+    <!-- ============ LAGER ============ -->
+    <section id="sektion-stock" class="block">
+      <span class="section-eyebrow">Admin</span>
+      <h2 style="margin-top:4px;">Lagerhantering</h2>
+
+      <h3>Fyll på lager</h3>
+      <ol class="steps">
+        <li>Gå till <strong>Backoffice → Stock → Add to stock</strong>.</li>
+        <li>Tryck på plusikonen, välj kategori och produkt.</li>
+        <li>Tryck på pennikonen och ange antal att lägga till.</li>
+        <li>Bekräfta. Du kan ange <em>Reference ID</em> och beskrivning (t.ex. leverantörsfaktura-nr).</li>
+      </ol>
+
+      <h3>Ta bort från lager</h3>
+      <p>Samma procedur under fliken <strong>Remove from stock</strong>. Används t.ex. vid svinn eller egen förbrukning.</p>
+
+      <h3>Rullande inventering (enstaka artikel)</h3>
+      <p>Under <strong>Count stock</strong> kan du räkna upp en produkt och sätta det faktiska saldot. Bra att använda löpande under dagen.</p>
+
+      <h3>Full inventering (hela lagret)</h3>
+      <ol class="steps">
+        <li>Gå till <strong>Stocks → Stock</strong> i GO CTRL-appen och välj rätt lagerplats.</li>
+        <li>Gå till <strong>Inventory counts</strong> och tryck <em>Open a new, full item count</em>.</li>
+        <li>Välj butik och valuta, tryck <em>Create item count</em>.</li>
+        <li>Varje medarbetare loggar in på sin enhet och väljer <em>Full items count → Participate in a full item count</em>.</li>
+        <li>Fördela ansvar för olika hyllor/områden så att allt räknas en gång.</li>
+        <li>Skanna eller sök upp varje artikel och ange antalet.</li>
+        <li>När alla är klara — svepa vänster på räkningen och tryck <strong>Send</strong>, bekräfta med <em>Submit and close</em>.</li>
+        <li>Öppna Backoffice på PC → <strong>Item count → Products</strong>. Kontrollera räknade och oräknade produkter, justera manuellt vid behov.</li>
+        <li>Tryck <strong>Update item count</strong>, gå sedan till <em>Details</em>-fliken och tryck <strong>Close</strong>.</li>
+      </ol>
+
+      <div class="callout warn">
+        <strong>Observera</strong>
+        Räkning under öppettider stöds inte med automatisering. Tar ni inventering mitt under dagen måste ni efterrepetera räkningen som en rullande räkning och dra en försäljningsrapport för perioden.
+      </div>
+    </section>
+
+    <!-- ============ ANVÄNDARE ============ -->
+    <section id="sektion-users" class="block">
+      <span class="section-eyebrow">Admin</span>
+      <h2 style="margin-top:4px;">Användare och behörigheter</h2>
+      <p>Hantera vem som får göra vad i kassan. Tre roller finns som standard: <strong>Management</strong>, <strong>Owner</strong> och <strong>Staff</strong>.</p>
+
+      <h3>Lägg till en användare</h3>
+      <ol class="steps">
+        <li>Gå till <strong>Backoffice → Users → Add user</strong>.</li>
+        <li>Ange namn och e-postadress.</li>
+        <li>Välj roll via <em>Attach role</em>.</li>
+        <li>Rekommenderat: sätt en PIN-kod för snabbinloggning i kassan.</li>
+        <li>(Valfritt) Lägg till en profilbild.</li>
+        <li>Tryck <strong>Add user</strong>.</li>
+      </ol>
+
+      <h3>Ändra vilka rättigheter en roll har</h3>
+      <p>Gå till <strong>Users → Permission</strong>. Här kan du t.ex. bestämma att rollen <em>Staff</em> inte ska kunna göra returer, se försäljningshistorik eller redigera produkter.</p>
+
+      <div class="callout tip">
+        <strong>Tips</strong>
+        Kassörer som ofta ringer och frågar efter kvittokopior behöver behörighet att se <em>Orders</em>/<em>Sales history</em>. Kontrollera detta först vid problem.
+      </div>
+    </section>
+
+    <!-- ============ RAPPORTER ============ -->
+    <section id="sektion-reports" class="block">
+      <span class="section-eyebrow">Admin</span>
+      <h2 style="margin-top:4px;">Rapporter</h2>
+
+      <h3>X-rapport</h3>
+      <p>En X-rapport är en ögonblicksbild av dagens försäljning och kassastatus <em>utan</em> att stänga dagen. Innehåller bland annat:</p>
+      <ul>
+        <li>Antal produkter sålda</li>
+        <li>Returnerade produkter</li>
+        <li>Kassaöppningar</li>
+        <li>Kontanter i kassan</li>
+        <li>Summa rabatter</li>
+      </ul>
+      <p>Dras via <strong>Backoffice → Reports → X-reports</strong> och kan skrivas ut på kvittoskrivaren.</p>
+
+      <h3>Försäljningsstatistik</h3>
+      <p>Under <strong>Home → Sale</strong> ser du omsättning per timme, dag, vecka och månad som grafer. Filtrera på valfri period med <em>Date</em>-knappen.</p>
+
+      <h3>KPI</h3>
+      <p>Under <strong>KPI</strong> hittar du snittkvittovärde (basket size) och marginal per produkt — bra för att snabbt se vad som tjänar mest pengar.</p>
+    </section>
+
+    <!-- ============ HÅRDVARA ============ -->
+    <section id="sektion-hardware" class="block">
+      <span class="section-eyebrow">Hårdvara</span>
+      <h2 style="margin-top:4px;">Rekommenderad hårdvara</h2>
+      <p>Sweetspot POS fungerar med en bred uppsättning utrustning. Här är det vi rekommenderar — kontakta support om du är osäker på vad som passar just din setup.</p>
+
+      <h3>iPad och iPhone</h3>
+      <div class="hw-grid">
+        <div class="hw-card"><h4>iPad</h4><div class="hw-meta">iPadOS 13 eller senare</div><p>Alla moderna iPads fungerar — en nyare modell ger bäst prestanda, särskilt vid samtidig skanning och betalning.</p></div>
+        <div class="hw-card"><h4>iPhone</h4><div class="hw-meta">iOS 13 eller senare</div><p>Används för mobil kassa och för ExtendaGO CTRL-appen (lager, inventering).</p></div>
+      </div>
+
+      <h3>Kvittoskrivare</h3>
+      <div class="hw-grid">
+        <div class="hw-card"><h4>Star mC-Print3</h4><div class="hw-meta">LAN + USB-hub</div><p>Standardvalet. Stöder kassalåda, skanner och kunddisplay i samma enhet.</p></div>
+        <div class="hw-card"><h4>Star mPOP</h4><div class="hw-meta">Skrivare + kassalåda</div><p>Kombinerad enhet. Kompakt lösning för mindre kassor.</p></div>
+        <div class="hw-card"><h4>Epson TM-T88VI</h4><div class="hw-meta">BT / LAN / WiFi</div><p>Snabb skrivare (300mm/s) för butiker med hög volym.</p></div>
+        <div class="hw-card"><h4>Star TSP143IIIU</h4><div class="hw-meta">USB</div><p>Prisvärd — stöder dock inte alla skannrar.</p></div>
+        <div class="hw-card"><h4>Seiko RP-F10</h4><div class="hw-meta">USB / USB-C / BT</div><p>Kompakt design, IPx1-skydd på vissa modeller.</p></div>
+      </div>
+
+      <h3 id="sektion-terminals">Kortterminaler</h3>
+      <div class="hw-grid">
+        <div class="hw-card"><h4>SumUp Air / Solo</h4><div class="hw-meta">Bluetooth / WiFi</div><p>Låg hårdvarukostnad, enkel setup — bra för mindre butiker.</p></div>
+        <div class="hw-card"><h4>Verifone P400 / M400</h4><div class="hw-meta">Ethernet / WiFi</div><p>Stationär terminal. Vanligast i traditionella kassor.</p></div>
+        <div class="hw-card"><h4>Verifone e285 (Adyen)</h4><div class="hw-meta">WiFi</div><p>Handhållen terminal med Adyen som aqcuirer.</p></div>
+        <div class="hw-card"><h4>Ingenico Move 3500/5000</h4><div class="hw-meta">WiFi / 4G</div><p>Mobil terminal från Nets.</p></div>
+        <div class="hw-card"><h4>Zettle Reader 2</h4><div class="hw-meta">Bluetooth</div><p>Snabb uppstart, bra reservtermnial.</p></div>
+        <div class="hw-card"><h4>Adyen NYC1</h4><div class="hw-meta">Bluetooth (BLE)</div><p>Lång batteritid, handhållen.</p></div>
+      </div>
+
+      <h3>Skannrar</h3>
+      <div class="hw-grid">
+        <div class="hw-card"><h4>Zebra DS9208 / DS9308</h4><div class="hw-meta">USB</div><p>2D-skanner för disk. Hög hastighet, kräver Star mC-Print3 vid USB-genomkoppling.</p></div>
+        <div class="hw-card"><h4>Zebra CS4070 / CS6080</h4><div class="hw-meta">Bluetooth 2D</div><p>För mobilt bruk — t.ex. golvförsäljning.</p></div>
+        <div class="hw-card"><h4>Socket Mobile S700 / S820</h4><div class="hw-meta">Bluetooth</div><p>S700 för disk, S820 för mobil användning.</p></div>
+      </div>
+
+      <h3>Övrigt</h3>
+      <div class="hw-grid">
+        <div class="hw-card"><h4>Kassalåda (APG Entry Level)</h4><p>Kopplas genom skrivaren. Ingen direktanslutning till iPad:en behövs.</p></div>
+        <div class="hw-card"><h4>Kunddisplay Star SCD222</h4><p>Kräver Star mC-Print3. USB-anslutning.</p></div>
+        <div class="hw-card"><h4>Etikettskrivare Zebra ZD421 / GK420</h4><p>Används med ExtendaGO App för prisetiketter.</p></div>
+      </div>
+
+      <div class="callout tip">
+        <strong>Konfigurera skrivare & terminaler</strong>
+        Gå till <strong>Backoffice → Settings → Printer</strong> respektive <strong>Settings → Terminals</strong> för att koppla in utrustningen. Välj rätt kopplingstyp (Bluetooth, WiFi, SumUp).
+      </div>
+    </section>
+
+    <!-- ============ INTEGRATIONER ============ -->
+    <section id="sektion-integrations" class="block">
+      <span class="section-eyebrow">Integrationer</span>
+      <h2 style="margin-top:4px;">Integrationer</h2>
+      <p>Sweetspot POS kan kopplas ihop med en rad externa tjänster. Här är de vanligaste — se de officiella guiderna för steg-för-steg-instruktioner.</p>
+
+      <table class="info">
+        <thead><tr><th>Tjänst</th><th>Används för</th><th>Guide</th></tr></thead>
+        <tbody>
+          <tr><td>Visma eAccounting</td><td>Automatisk bokföring av försäljning</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/05/how-to-set-up-eaccounting-in-5-minutes-ok.pdf" target="_blank" rel="noopener">Setup-guide ↗</a></td></tr>
+          <tr><td>Shopify</td><td>Webshop → POS-synk</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/01/extendago-shopify.pdf" target="_blank" rel="noopener">Setup-guide ↗</a></td></tr>
+          <tr><td>WooCommerce</td><td>Webshop → POS-synk</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/05/extendago-woocommerce-import.pdf" target="_blank" rel="noopener">Setup-guide ↗</a></td></tr>
+          <tr><td>Voyado</td><td>Kundklubb, CRM, lojalitet</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/05/english-extendago-pos-voyado.pdf" target="_blank" rel="noopener">Setup-guide ↗</a></td></tr>
+          <tr><td>Dintero</td><td>Betalningar (norsk marknad)</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2024/02/setup-dintero.pdf" target="_blank" rel="noopener">Setup-guide ↗</a></td></tr>
+          <tr><td>MobilePay</td><td>Mobilbetalningar</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/05/mobilepay-integration-manual-ok.pdf" target="_blank" rel="noopener">Setup-guide ↗</a></td></tr>
+          <tr><td>Kibana</td><td>Avancerad dataanalys</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/05/kibana-setup.pdf" target="_blank" rel="noopener">Setup-guide ↗</a></td></tr>
+          <tr><td>Sharespine</td><td>Ekonomisystem-koppling</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2025/01/extendago-x-sharespine-accounting-integration-guide.pdf" target="_blank" rel="noopener">Setup-guide ↗</a></td></tr>
+          <tr><td>GBAT10</td><td>Kvitto-rapportering (fiskal)</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/05/gbat10-mapping.pdf" target="_blank" rel="noopener">Mappning ↗</a></td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <strong>Funderar du på att koppla in något annat?</strong>
+        Hör av dig till supporten — vi har erfarenhet av fler integrationer än de som listas här och hjälper gärna till att hitta en lösning.
+      </div>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section id="sektion-faq" class="block">
+      <span class="section-eyebrow">FAQ</span>
+      <h2 style="margin-top:4px;">Vanliga frågor</h2>
+      <p>Snabba svar på frågor vi ofta får från kunder. Hittar du inte det du söker? Använd sökfältet ovan eller <a href="#support">kontakta support</a>.</p>
+
+      <div class="faq-filter" id="faqFilter">
+        <!-- knappar renderas av JS baserat på kategorier i faqData -->
+      </div>
+
+      <div id="faqList"><!-- FAQ renderas här av JS --></div>
+    </section>
+
+    <!-- ============ MANUALER ============ -->
+    <section id="sektion-manuals" class="block">
+      <span class="section-eyebrow">Djupdyk</span>
+      <h2 style="margin-top:4px;">PDF-manualer för djupdyk</h2>
+      <p>Behöver du en mer uttömmande referens? Dessa PDF:er är de officiella manualerna som ligger bakom det mesta av innehållet här.</p>
+      <table class="info">
+        <tbody>
+          <tr><td>POS Manual — Sales and use of registers</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/05/extendago-pos-manual-sales-and-use-of-registers-3.pdf" target="_blank" rel="noopener">Öppna PDF ↗</a></td></tr>
+          <tr><td>POS Manual — Backoffice i kassan</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/05/pos-manual-backoffice-3.pdf" target="_blank" rel="noopener">Öppna PDF ↗</a></td></tr>
+          <tr><td>Backoffice (webb) — features</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/05/backoffice-manual-features-1.pdf" target="_blank" rel="noopener">Öppna PDF ↗</a></td></tr>
+          <tr><td>Backoffice — parametrar</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/05/backoffice-parameters-1.pdf" target="_blank" rel="noopener">Öppna PDF ↗</a></td></tr>
+          <tr><td>Inventeringsguide</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/12/inventory-guidance-extendago-pos.pdf" target="_blank" rel="noopener">Öppna PDF ↗</a></td></tr>
+          <tr><td>Gift cards, Voucher, Discounts & Campaigns</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/05/backoffice-manual-gift-cards-voucher-discounts-and-campaigns-2.pdf" target="_blank" rel="noopener">Öppna PDF ↗</a></td></tr>
+          <tr><td>Hårdvarurekommendationer</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/10/hardware-recommendations-extendago-compressed-compressed.pdf" target="_blank" rel="noopener">Öppna PDF ↗</a></td></tr>
+          <tr><td>Release notes (senaste versionerna)</td><td><a href="https://www.extendago.com/release-notes-and-new-features/" target="_blank" rel="noopener">Öppna sida ↗</a></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============ SUPPORT ============ -->
+    <section id="support" class="block">
+      <span class="section-eyebrow">Support</span>
+      <h2 style="margin-top:4px;">Kontakta oss</h2>
+      <p>Hittar du inte svar på din fråga? Vi svarar alltid så snabbt vi kan.</p>
+      <!-- SUPPORT-KONFIG: ändra kontaktuppgifter här -->
+      <div class="guide-grid">
+        <a class="guide-card" href="https://club.sweetspot.io/login" target="_blank" rel="noopener">
+          <h4>💬 Chatta med oss</h4>
+          <p>Snabbaste vägen — chatten ligger i vårt backoffice när du är inloggad.</p>
+          <span class="arrow">Öppna backoffice →</span>
+        </a>
+        <a class="guide-card" href="mailto:hello@sweetspot.io">
+          <h4>✉️ E-post</h4>
+          <p>Skicka ditt ärende till <strong>hello@sweetspot.io</strong> — vi svarar vanligtvis inom en arbetsdag.</p>
+          <span class="arrow">Skriv till oss →</span>
+        </a>
+        <a class="guide-card" href="https://sweetspot.statuspage.io/" target="_blank" rel="noopener">
+          <h4>⚙️ Driftstatus</h4>
+          <p>Är något nere? Kolla den publika statussidan.</p>
+          <span class="arrow">Visa status →</span>
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-about">
+      <div class="footer-brand">
+        <svg viewBox="0 0 100 100" width="38" height="38" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="100" height="100" rx="22" fill="#FFED4E"/>
+          <path d="M56 22 a22 22 0 1 1 0 44 Z" fill="#1A1A1A"/>
+          <path d="M44 38 a22 22 0 1 0 0 44 Z" fill="#1A1A1A"/>
+          <circle cx="64" cy="74" r="6" fill="#1A1A1A"/>
+        </svg>
+        <span>Sweetspot POS</span>
+      </div>
+      <p>Hjälpcenter för vårt kassasystem. Innehållet uppdateras löpande — hör av dig om något saknas!</p>
+    </div>
+
+    <div>
+      <h4>Snabblänkar</h4>
+      <a href="#sektion-getting-started">Kom igång</a>
+      <a href="#sektion-kvitton">Kvitton & kopior</a>
+      <a href="#sektion-hardware">Hårdvara</a>
+      <a href="#sektion-integrations">Integrationer</a>
+      <a href="#sektion-faq">FAQ</a>
+    </div>
+
+    <div>
+      <h4>Kontakt</h4>
+      <a href="mailto:hello@sweetspot.io">hello@sweetspot.io</a>
+      <a href="https://club.sweetspot.io/login" target="_blank" rel="noopener">Chatt i backoffice ↗</a>
+      <a href="https://sweetspot.statuspage.io/" target="_blank" rel="noopener">Driftstatus ↗</a>
+      <a href="https://sweetspot.io/" target="_blank" rel="noopener">sweetspot.io ↗</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ================= FAQ-DATA ================= -->
+<!--
+  UPPDATERA FAQ HÄR:
+  Varje fråga är ett objekt med fälten "kategori", "fraga" och "svar".
+  Lägg till en ny fråga genom att kopiera ett befintligt objekt och
+  ändra texten. Kom ihåg kommatecken mellan objekt och INTE efter det
+  sista objektet. Om svaret innehåller radbrytningar — använd \n.
+  HTML i svaret stöds via dangerouslySetInnerHTML-liknande inbäddning
+  i JS:en nedan (används sparsamt).
+-->
+<script id="faq-data" type="application/json">
+[
+  {
+    "kategori": "Kvitton",
+    "fraga": "Hur skriver jag ut ett kvitto för ett tidigare köp?",
+    "svar": "Tryck på Backoffice-knappen i övre vänstra hörnet i försäljningsvyn. Gå till Sale → Orders, filtrera på datum vid behov, tryck på ordern och sedan på skrivarikonen till höger. Se även vår fulla guide under 'Kvitton & kvittokopior'."
+  },
+  {
+    "kategori": "Kvitton",
+    "fraga": "Kan jag skicka kvittot via e-post eller SMS istället för att skriva ut?",
+    "svar": "Ja. Antingen anger du kundens e-post/telefonnummer direkt i betalningsvyn innan köpet slutförs, eller så går du i efterhand till Backoffice → Sale → Orders och trycker på brevikonen bredvid den aktuella ordern."
+  },
+  {
+    "kategori": "Kvitton",
+    "fraga": "Kvittot skrevs aldrig ut — är köpet registrerat?",
+    "svar": "Ja, köpet är registrerat i databasen även om skrivaren var offline. Kvittot hamnar i utskriftskön och visas som ett rött märke på skrivarikonen. Tryck på ikonen och välj 'Print cached receipts' när skrivaren är tillbaka."
+  },
+  {
+    "kategori": "Retur",
+    "fraga": "Hur gör jag återköp mot ett kvitto?",
+    "svar": "Tryck på Return-knappen i kassan. Skanna QR-koden på kundens kvitto (eller skriv in kvittonumret). Välj de rader som ska returneras, fyll i anledning och tryck Tender. Välj samma betalsätt som köpet för enklast hantering."
+  },
+  {
+    "kategori": "Retur",
+    "fraga": "Vad gör jag om kunden har tappat bort kvittot?",
+    "svar": "Be om kundens namn/telefonnummer/betalkortsnummer (sista siffrorna) och sök upp köpet under Backoffice → Sale → Orders. Skriv ut en kvittokopia och gör sedan retur mot den. I sista hand kan ni göra en manuell retur — men då måste pris och moms anges manuellt."
+  },
+  {
+    "kategori": "Betalning",
+    "fraga": "Kortterminalen reagerar inte på betalning — vad gör jag?",
+    "svar": "1) Kontrollera att terminalstatus-ikonen i kassan är grön. 2) Starta om terminalen. 3) Gå till Backoffice → Settings → Terminals och bekräfta att rätt integration (Bluetooth, WiFi, SumUp) är vald. 4) Om det fortfarande inte fungerar — kontakta support."
+  },
+  {
+    "kategori": "Betalning",
+    "fraga": "Kan vi ta emot flera olika betalsätt på samma köp (t.ex. del kort, del kontant)?",
+    "svar": "Ja. I betalningsvyn — tryck på det första betalsättet och ange delbelopp. Välj sedan nästa betalsätt för resten tills hela totalen är täckt."
+  },
+  {
+    "kategori": "Betalning",
+    "fraga": "Kan kunden betala med flera presentkort?",
+    "svar": "Ja. Systemet tillåter flera presentkort på samma köp. Krediten på respektive presentkort redovisas på kvittot."
+  },
+  {
+    "kategori": "Dagsavslut",
+    "fraga": "Vad är skillnaden mellan X-rapport och dagsavslut (EOD)?",
+    "svar": "X-rapporten är en ögonblicksbild av dagens försäljning som kan tas när som helst utan att stänga dagen. EOD stänger dagen — räknar kontanter, registrerar bankinsättning och skapar en slutgiltig Z-rapport."
+  },
+  {
+    "kategori": "Dagsavslut",
+    "fraga": "Vad händer om det blir 'balance mismatch' vid EOD?",
+    "svar": "Systemet godkänner ändå dagsavslutet men loggar diffen. Kontrollera att kontanter räknats rätt och att inga ospårade uttag/insättningar gjorts. Uppstår differens regelbundet — se över rutinerna för växelkassa och kontanthantering."
+  },
+  {
+    "kategori": "Produkter",
+    "fraga": "Hur lägger jag till en ny produkt?",
+    "svar": "Backoffice → Inventory → Products → Plusikonen. Ange namn, inköpspris, försäljningspris och lager. Koppla till kategori för att få produkten att synas i rätt ruta i försäljningsvyn. Det går även att göra detta på webben (wbo-etail.wallmob.com) — ofta smidigare om många produkter ska läggas upp samtidigt."
+  },
+  {
+    "kategori": "Produkter",
+    "fraga": "Kan jag importera produkter från en Excel-fil?",
+    "svar": "Ja. På webb-backoffice finns en import-/exportfunktion som tar emot CSV-filer. Se den officiella guiden 'Import / Export products' under Djupdyk."
+  },
+  {
+    "kategori": "Lager",
+    "fraga": "Hur gör jag en full inventering?",
+    "svar": "Använd ExtendaGO CTRL-appen: gå till Stocks → Stock → Inventory counts → 'Open a new full item count'. Fördela räkningsområden, skanna/räkna alla artiklar, tryck Send när alla är klara. Avsluta i Backoffice på webben under Item count → Update item count → Close."
+  },
+  {
+    "kategori": "Lager",
+    "fraga": "Kan jag räkna lagret mitt under öppettiderna?",
+    "svar": "Ja, men automatiseringen är inte garanterad att stämma. Dra en försäljningsrapport för perioden och räkna igen som en rullande räkning. För bäst precision — räkna efter stängning."
+  },
+  {
+    "kategori": "Användare",
+    "fraga": "Hur ändrar jag behörigheter för en användare?",
+    "svar": "Backoffice → Users → Permission. Välj rollen (Management, Owner eller Staff) och bocka i/ur vad rollen ska få göra. Rollen appliceras per användare under Users-fliken."
+  },
+  {
+    "kategori": "Användare",
+    "fraga": "En kassör hittar inte Orders-fliken i backoffice — vad är fel?",
+    "svar": "Nästan alltid är det en behörighetsfråga. Gå till Users → Permission och bekräfta att rollen (ofta 'Staff') har rättighet att se sales history."
+  },
+  {
+    "kategori": "Hårdvara",
+    "fraga": "Vilken iPad rekommenderar ni?",
+    "svar": "Alla iPads med iPadOS 13 eller senare fungerar. Nyare modeller ger bäst prestanda — särskilt om ni samtidigt kör skanner och betalterminal. Vanliga val: iPad (10:e gen) eller iPad Air."
+  },
+  {
+    "kategori": "Hårdvara",
+    "fraga": "Varför får jag inte kassalådan att öppna?",
+    "svar": "Kassalådan kopplas genom kvittoskrivaren, inte direkt till iPad:en. Kontrollera 1) att skrivaren är inkopplad och grön i kassan, 2) att rätt 'active high/low'-polaritet är satt i skrivarens inställningar (Star, Epson och Seiko kan konfigureras), och 3) att kabeln sitter i rätt port på skrivaren."
+  },
+  {
+    "kategori": "Hårdvara",
+    "fraga": "Kan jag använda valfri kortterminal?",
+    "svar": "Inte exakt — Sweetspot POS stödjer ett urval av terminaler via olika acquirers (SumUp, Adyen, Nets, Zettle, Dintero m.fl.). Se avsnittet Rekommenderad hårdvara för komplett lista. Vid osäkerhet — hör av dig till oss innan inköp."
+  },
+  {
+    "kategori": "Integrationer",
+    "fraga": "Kan Sweetspot POS skicka försäljning automatiskt till vårt ekonomisystem?",
+    "svar": "Ja. Vi har färdiga integrationer med Visma eAccounting, Fortnox (via Sharespine), och fler. Se avsnittet Integrationer för setup-guider."
+  },
+  {
+    "kategori": "Integrationer",
+    "fraga": "Synkar Sweetspot POS med Shopify / WooCommerce?",
+    "svar": "Ja — produkter, lager och orders kan synkas både upp och ner. Kräver initial konfiguration. Se setup-guiderna under Integrationer."
+  },
+  {
+    "kategori": "Allmänt",
+    "fraga": "Var loggar jag in i webb-backoffice?",
+    "svar": "https://wbo-etail.wallmob.com/login — använd samma inloggning som i kassaappen. Där hanterar du produkter, kampanjer, användare och rapporter på större skärm."
+  },
+  {
+    "kategori": "Allmänt",
+    "fraga": "Finns det en driftstatus-sida?",
+    "svar": "Ja — https://sweetspot.statuspage.io/ visar aktuell status för alla våra tjänster. Bra att kolla om något känns trögt eller inte fungerar."
+  }
+]
+</script>
+
+<!-- ================= JAVASCRIPT ================= -->
+<script>
+(function () {
+  'use strict';
+
+  // ---------- Läs in FAQ ----------
+  const faqDataRaw = document.getElementById('faq-data').textContent;
+  let faqData = [];
+  try { faqData = JSON.parse(faqDataRaw); }
+  catch (e) { console.error('FAQ JSON kan inte parsas:', e); }
+
+  // ---------- Rendera FAQ ----------
+  const faqList = document.getElementById('faqList');
+  const faqFilter = document.getElementById('faqFilter');
+  const categories = Array.from(new Set(faqData.map(f => f.kategori)));
+
+  function renderFilter(activeCat) {
+    faqFilter.innerHTML = '';
+    const all = document.createElement('button');
+    all.textContent = 'Alla';
+    all.classList.toggle('active', !activeCat);
+    all.addEventListener('click', () => renderFaq(null));
+    faqFilter.appendChild(all);
+    categories.forEach(c => {
+      const b = document.createElement('button');
+      b.textContent = c;
+      b.classList.toggle('active', c === activeCat);
+      b.addEventListener('click', () => renderFaq(c));
+      faqFilter.appendChild(b);
+    });
+  }
+
+  function renderFaq(activeCat) {
+    renderFilter(activeCat);
+    faqList.innerHTML = '';
+    const items = activeCat ? faqData.filter(f => f.kategori === activeCat) : faqData;
+    if (items.length === 0) { faqList.innerHTML = '<p>Inga frågor i denna kategori än.</p>'; return; }
+    items.forEach(f => {
+      const d = document.createElement('details');
+      d.className = 'faq-item';
+      d.innerHTML = `
+        <summary><span class="faq-cat">${escapeHtml(f.kategori)}</span>${escapeHtml(f.fraga)}</summary>
+        <div class="faq-body">${linkify(escapeHtml(f.svar))}</div>
+      `;
+      faqList.appendChild(d);
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+  }
+  function linkify(s) {
+    return s.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>')
+            .replace(/\n/g, '<br>');
+  }
+
+  renderFaq(null);
+
+  // ---------- Bygg sökindex ----------
+  // Vi indexerar: alla sections + alla FAQ-frågor
+  function buildIndex() {
+    const idx = [];
+    // Sections
+    document.querySelectorAll('section.block').forEach(sec => {
+      const h2 = sec.querySelector('h2');
+      if (!h2) return;
+      const title = h2.textContent.trim();
+      const text = sec.textContent.replace(/\s+/g, ' ').trim();
+      const eyebrow = (sec.querySelector('.section-eyebrow') || {}).textContent || 'Guide';
+      idx.push({ type: 'section', id: sec.id, title, text, category: eyebrow.trim() });
+    });
+    // FAQ
+    faqData.forEach(f => {
+      idx.push({
+        type: 'faq', id: 'sektion-faq',
+        title: f.fraga, text: f.svar, category: 'FAQ · ' + f.kategori
+      });
+    });
+    return idx;
+  }
+  const searchIndex = buildIndex();
+
+  // ---------- Sök ----------
+  function doSearch(q) {
+    q = q.trim().toLowerCase();
+    if (!q) return [];
+    const terms = q.split(/\s+/).filter(Boolean);
+    const results = [];
+    searchIndex.forEach(entry => {
+      const hay = (entry.title + ' ' + entry.text).toLowerCase();
+      let score = 0;
+      let allMatch = true;
+      terms.forEach(t => {
+        const titleHits = (entry.title.toLowerCase().match(new RegExp(escapeRegex(t), 'g')) || []).length;
+        const bodyHits  = (hay.match(new RegExp(escapeRegex(t), 'g')) || []).length;
+        if (!bodyHits) allMatch = false;
+        score += titleHits * 10 + bodyHits;
+      });
+      if (allMatch && score > 0) results.push({ entry, score });
+    });
+    results.sort((a, b) => b.score - a.score);
+    return results.slice(0, 10);
+  }
+  function escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+  function snippet(text, terms) {
+    const lower = text.toLowerCase();
+    let pos = -1;
+    for (const t of terms) { const p = lower.indexOf(t); if (p >= 0) { pos = p; break; } }
+    if (pos < 0) pos = 0;
+    const start = Math.max(0, pos - 40);
+    const end = Math.min(text.length, pos + 180);
+    let s = text.slice(start, end);
+    if (start > 0) s = '…' + s;
+    if (end < text.length) s = s + '…';
+    // Highlight
+    terms.forEach(t => {
+      s = s.replace(new RegExp('(' + escapeRegex(t) + ')', 'gi'), '<mark>$1</mark>');
+    });
+    return s;
+  }
+
+  function setupSearch(inputId, resultsId) {
+    const input = document.getElementById(inputId);
+    const results = document.getElementById(resultsId);
+    if (!input || !results) return;
+    let active = -1;
+
+    input.addEventListener('input', () => {
+      const q = input.value;
+      const hits = doSearch(q);
+      if (!q.trim()) { results.classList.remove('active'); results.innerHTML = ''; return; }
+      results.innerHTML = '';
+      if (hits.length === 0) {
+        results.innerHTML = '<div class="search-empty">Inga träffar för “' + escapeHtml(q) + '”</div>';
+      } else {
+        const terms = q.trim().toLowerCase().split(/\s+/);
+        hits.forEach((h, i) => {
+          const a = document.createElement('a');
+          a.className = 'search-result-item';
+          a.href = '#' + h.entry.id;
+          a.innerHTML = `
+            <div class="sr-cat">${escapeHtml(h.entry.category)}</div>
+            <div class="sr-title">${escapeHtml(h.entry.title)}</div>
+            <div class="sr-snippet">${snippet(h.entry.text, terms)}</div>
+          `;
+          a.addEventListener('click', () => {
+            results.classList.remove('active');
+            input.value = '';
+          });
+          results.appendChild(a);
+        });
+      }
+      results.classList.add('active');
+      active = -1;
+    });
+
+    input.addEventListener('keydown', (e) => {
+      const items = results.querySelectorAll('.search-result-item');
+      if (e.key === 'ArrowDown') { e.preventDefault(); active = Math.min(active + 1, items.length - 1); items[active] && items[active].focus(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); active = Math.max(active - 1, 0); items[active] && items[active].focus(); }
+      else if (e.key === 'Escape') { results.classList.remove('active'); input.blur(); }
+      else if (e.key === 'Enter' && items[0]) { items[0].click(); }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!results.contains(e.target) && e.target !== input) results.classList.remove('active');
+    });
+
+    input.addEventListener('focus', () => {
+      if (input.value.trim() && results.children.length) results.classList.add('active');
+    });
+  }
+
+  setupSearch('topSearch', 'topSearchResults');
+  setupSearch('heroSearch', 'heroSearchResults');
+
+  // ---------- Sidebar active-state vid scroll ----------
+  const sideLinks = document.querySelectorAll('.sidebar a');
+  const linkMap = {};
+  sideLinks.forEach(a => { linkMap[a.getAttribute('href').slice(1)] = a; });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      const id = e.target.id;
+      const link = linkMap[id];
+      if (!link) return;
+      if (e.isIntersecting) {
+        sideLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+
+  document.querySelectorAll('section.block').forEach(s => observer.observe(s));
+
+})();
+</script>
+
+</body>
+</html>
