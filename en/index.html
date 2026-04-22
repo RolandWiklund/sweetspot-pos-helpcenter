@@ -1,1405 +1,402 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Sweetspot POS — Help Center</title>
-<meta name="description" content="Help center for Sweetspot POS. Guides, FAQ, hardware and integrations." />
 
-<!--
-====================================================================
- SWEETSPOT POS – HELP CENTER (English)
- Last updated: 2026-04-18
- ====================================================================
-
- HOW TO UPDATE CONTENT:
-
- 1) FAQ (most common case):
-    Scroll to the tag <script id="faq-data">.
-    Every question is a JSON object like:
-
-      { "category": "Receipts",
-        "question": "How do I reprint an earlier receipt?",
-        "answer":   "Tap Backoffice ..." }
-
-    To add a new question: copy an existing object, paste it in,
-    change the text. Remember commas between objects.
-
- 2) Guides (large sections):
-    Find the section (e.g. <section id="section-receipts">) and
-    edit directly in the HTML.
-
- 3) Change logo:
-    Search the file for the word LOGO (shown as an HTML comment).
-    Replace the SVG block right after it with an <img> tag,
-    or paste in your own SVG code.
-
- 4) Change colors / brand:
-    Color variables live in :root at the top of the CSS. Edit
-    them there and everything on the page updates.
-
- 5) Support links:
-    Search for "SUPPORT-CONFIG" in the document.
-====================================================================
--->
-
-<style>
-/* -------- SWEETSPOT BRAND VARIABLES -------- */
-:root {
-  --ss-yellow: #FFED4E;      /* Primary yellow (from logo) */
-  --ss-yellow-soft: #FFF8B8; /* Light yellow for backgrounds */
-  --ss-beige: #F8F1E0;       /* Warm beige */
-  --ss-beige-dark: #EFE4CC;  /* Darker beige for edges */
-  --ss-black: #1A1A1A;       /* Primary dark */
-  --ss-gray-900: #2B2B2B;
-  --ss-gray-700: #4A4A4A;
-  --ss-gray-500: #767676;
-  --ss-gray-300: #D6D6D6;
-  --ss-gray-100: #F3F3F3;
-  --ss-white: #FFFFFF;
-  --ss-success: #1F7A3A;
-  --ss-accent: #FFED4E;
-
-  --radius-s: 8px;
-  --radius-m: 14px;
-  --radius-l: 22px;
-
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-  --shadow-md: 0 4px 16px rgba(26,26,26,0.08);
-  --shadow-lg: 0 12px 32px rgba(26,26,26,0.12);
-
-  --maxw: 1240px;
-}
-
-/* -------- RESET & BASE -------- */
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 90px; }
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background: var(--ss-beige);
-  color: var(--ss-black);
-  line-height: 1.55;
-  font-size: 16px;
-  -webkit-font-smoothing: antialiased;
-}
-h1, h2, h3, h4 { color: var(--ss-black); font-weight: 700; letter-spacing: -0.01em; margin-top: 0; }
-h1 { font-size: clamp(1.8rem, 3.5vw, 2.6rem); line-height: 1.15; }
-h2 { font-size: 1.75rem; margin: 2.5rem 0 1rem; line-height: 1.2; }
-h3 { font-size: 1.2rem; margin: 1.5rem 0 0.5rem; }
-p  { margin: 0 0 1rem; }
-a  { color: var(--ss-black); text-decoration: underline; text-decoration-color: var(--ss-yellow); text-underline-offset: 3px; }
-a:hover { text-decoration-thickness: 2px; }
-code, kbd { font-family: "SF Mono", Menlo, Consolas, monospace; background: var(--ss-gray-100); padding: 1px 6px; border-radius: 4px; font-size: 0.92em; }
-ol, ul { padding-left: 1.25rem; }
-li { margin-bottom: 0.35rem; }
-
-/* -------- HEADER -------- */
-.topbar {
-  position: sticky; top: 0; z-index: 50;
-  background: var(--ss-white);
-  border-bottom: 1px solid var(--ss-beige-dark);
-  box-shadow: var(--shadow-sm);
-}
-.topbar-inner {
-  max-width: var(--maxw);
-  margin: 0 auto;
-  padding: 14px 28px;
-  display: flex; align-items: center; gap: 20px;
-}
-.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ss-black); flex-shrink: 0; }
-.brand-logo { width: 38px; height: 38px; flex-shrink: 0; }
-.brand-name { font-weight: 800; font-size: 1.05rem; letter-spacing: -0.01em; }
-.brand-tag { color: var(--ss-gray-500); font-size: 0.82rem; margin-left: 2px; }
-
-.search-wrap { flex: 1; position: relative; max-width: 560px; margin: 0 auto; }
-.search-input {
-  width: 100%;
-  padding: 12px 16px 12px 44px;
-  border: 1.5px solid var(--ss-gray-300);
-  border-radius: 999px;
-  font-size: 15px;
-  background: var(--ss-white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23767676' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E") no-repeat 16px center;
-  transition: all 0.15s ease;
-  outline: none;
-}
-.search-input:focus { border-color: var(--ss-black); box-shadow: 0 0 0 3px var(--ss-yellow); }
-.search-results {
-  display: none;
-  position: absolute; top: calc(100% + 8px); left: 0; right: 0;
-  background: var(--ss-white);
-  border: 1px solid var(--ss-gray-300);
-  border-radius: var(--radius-m);
-  box-shadow: var(--shadow-lg);
-  max-height: 70vh; overflow-y: auto;
-  z-index: 60;
-}
-.search-results.active { display: block; }
-.search-result-item {
-  padding: 12px 18px;
-  border-bottom: 1px solid var(--ss-gray-100);
-  cursor: pointer;
-  text-decoration: none; color: var(--ss-black); display: block;
-}
-.search-result-item:hover, .search-result-item:focus { background: var(--ss-beige); }
-.search-result-item .sr-cat { display: inline-block; font-size: 0.72rem; background: var(--ss-yellow); color: var(--ss-black); padding: 2px 8px; border-radius: 4px; font-weight: 600; margin-bottom: 4px; }
-.search-result-item .sr-title { font-weight: 600; margin: 2px 0; font-size: 0.95rem; }
-.search-result-item .sr-snippet { font-size: 0.85rem; color: var(--ss-gray-700); line-height: 1.4; }
-.search-result-item mark { background: var(--ss-yellow); padding: 0 2px; border-radius: 2px; }
-.search-empty { padding: 18px; color: var(--ss-gray-500); text-align: center; font-size: 0.9rem; }
-
-.lang-switch {
-  display: inline-flex; align-items: center;
-  border: 1px solid var(--ss-beige-dark);
-  border-radius: 999px;
-  padding: 4px; gap: 2px;
-  background: var(--ss-white);
-  font-size: 0.78rem; font-weight: 600;
-  margin-right: 4px;
-}
-.lang-switch a {
-  padding: 4px 10px; border-radius: 999px;
-  text-decoration: none; color: var(--ss-gray-700);
-  transition: all 0.1s ease;
-}
-.lang-switch a.active { background: var(--ss-black); color: var(--ss-white); }
-.lang-switch a:hover:not(.active) { background: var(--ss-beige); color: var(--ss-black); }
-
-.topbar-cta {
-  background: var(--ss-black); color: var(--ss-white);
-  padding: 10px 18px; border-radius: 999px;
-  text-decoration: none; font-weight: 600; font-size: 0.9rem;
-  white-space: nowrap;
-  transition: transform 0.1s ease;
-}
-.topbar-cta:hover { transform: translateY(-1px); color: var(--ss-white); text-decoration: none; }
-
-/* -------- HERO -------- */
-.hero {
-  background: linear-gradient(180deg, var(--ss-yellow) 0%, var(--ss-yellow-soft) 100%);
-  padding: 64px 28px 72px;
-  text-align: center;
-  border-bottom: 1px solid var(--ss-beige-dark);
-}
-.hero-inner { max-width: 760px; margin: 0 auto; }
-.hero h1 { margin-bottom: 12px; }
-.hero p { font-size: 1.1rem; color: var(--ss-gray-700); margin-bottom: 32px; }
-.hero .search-wrap { max-width: 620px; }
-.hero .search-input { padding: 16px 20px 16px 52px; font-size: 16px; background-size: 20px; background-position: 20px center; }
-.hero-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 22px; }
-.hero-chip {
-  background: var(--ss-white);
-  border: 1px solid var(--ss-beige-dark);
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  text-decoration: none;
-  color: var(--ss-gray-900);
-  transition: all 0.15s ease;
-}
-.hero-chip:hover { background: var(--ss-black); color: var(--ss-white); text-decoration: none; border-color: var(--ss-black); }
-
-/* -------- LAYOUT -------- */
-.layout {
-  max-width: var(--maxw);
-  margin: 0 auto;
-  padding: 32px 28px 80px;
-  display: grid;
-  grid-template-columns: 260px 1fr;
-  gap: 40px;
-}
-@media (max-width: 900px) {
-  .layout { grid-template-columns: 1fr; padding: 24px 20px 60px; }
-  .sidebar { position: static; order: 2; }
-}
-
-/* -------- SIDEBAR -------- */
-.sidebar {
-  position: sticky;
-  top: 92px;
-  align-self: start;
-  max-height: calc(100vh - 110px);
-  overflow-y: auto;
-  padding-right: 8px;
-}
-.sidebar-title {
-  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em;
-  color: var(--ss-gray-500); font-weight: 700;
-  margin: 0 0 12px 12px;
-}
-.sidebar ul { list-style: none; padding: 0; margin: 0 0 24px; }
-.sidebar li { margin: 0; }
-.sidebar a {
-  display: block;
-  padding: 9px 12px;
-  border-radius: var(--radius-s);
-  text-decoration: none;
-  color: var(--ss-gray-900);
-  font-size: 0.92rem;
-  font-weight: 500;
-  transition: background 0.1s ease;
-}
-.sidebar a:hover { background: var(--ss-beige-dark); }
-.sidebar a.active { background: var(--ss-black); color: var(--ss-white); font-weight: 600; }
-
-/* -------- CONTENT -------- */
-.content { min-width: 0; }
-section.block {
-  background: var(--ss-white);
-  border-radius: var(--radius-l);
-  padding: 36px 40px;
-  margin-bottom: 28px;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--ss-beige-dark);
-}
-@media (max-width: 600px) { section.block { padding: 24px 22px; } }
-
-.section-eyebrow {
-  display: inline-block;
-  background: var(--ss-yellow);
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  margin-bottom: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-/* Guide cards */
-.guide-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 16px;
-  margin: 16px 0;
-}
-.guide-card {
-  background: var(--ss-beige);
-  border: 1px solid var(--ss-beige-dark);
-  border-radius: var(--radius-m);
-  padding: 18px 20px;
-  text-decoration: none;
-  color: var(--ss-black);
-  transition: all 0.15s ease;
-  display: flex; flex-direction: column; gap: 6px;
-}
-.guide-card:hover { background: var(--ss-yellow); border-color: var(--ss-yellow); transform: translateY(-2px); text-decoration: none; }
-.guide-card h4 { margin: 0; font-size: 1rem; }
-.guide-card p { margin: 0; font-size: 0.88rem; color: var(--ss-gray-700); }
-.guide-card .arrow { margin-top: 6px; font-weight: 700; }
-
-/* Step boxes */
-.steps {
-  counter-reset: stepcount;
-  list-style: none;
-  padding: 0;
-  margin: 18px 0;
-}
-.steps li {
-  counter-increment: stepcount;
-  position: relative;
-  padding: 14px 18px 14px 60px;
-  background: var(--ss-beige);
-  border-radius: var(--radius-m);
-  margin-bottom: 10px;
-  border: 1px solid var(--ss-beige-dark);
-}
-.steps li::before {
-  content: counter(stepcount);
-  position: absolute;
-  top: 12px; left: 14px;
-  width: 32px; height: 32px;
-  border-radius: 50%;
-  background: var(--ss-black);
-  color: var(--ss-yellow);
-  font-weight: 700;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.95rem;
-}
-
-/* Info/tip callouts */
-.callout {
-  border-left: 4px solid var(--ss-black);
-  background: var(--ss-yellow-soft);
-  padding: 14px 18px;
-  border-radius: var(--radius-s);
-  margin: 18px 0;
-  font-size: 0.95rem;
-}
-.callout.tip { border-color: var(--ss-success); background: #EAF6EC; }
-.callout.warn { border-color: #D87B1B; background: #FFF3E5; }
-.callout strong { display: block; margin-bottom: 4px; text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.05em; }
-
-/* Tables */
-table.info { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 0.93rem; }
-table.info th, table.info td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--ss-beige-dark); vertical-align: top; }
-table.info th { background: var(--ss-beige); font-weight: 600; }
-
-/* FAQ */
-.faq-filter { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-.faq-filter button {
-  background: var(--ss-white);
-  border: 1px solid var(--ss-beige-dark);
-  padding: 6px 14px;
-  border-radius: 999px;
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: all 0.1s ease;
-}
-.faq-filter button:hover { border-color: var(--ss-black); }
-.faq-filter button.active { background: var(--ss-black); color: var(--ss-white); border-color: var(--ss-black); }
-
-.faq-item {
-  border: 1px solid var(--ss-beige-dark);
-  background: var(--ss-beige);
-  border-radius: var(--radius-m);
-  margin-bottom: 10px;
-  overflow: hidden;
-  transition: box-shadow 0.15s ease;
-}
-.faq-item[open] { box-shadow: var(--shadow-sm); background: var(--ss-white); }
-.faq-item summary {
-  list-style: none;
-  cursor: pointer;
-  padding: 16px 48px 16px 20px;
-  font-weight: 600;
-  font-size: 1rem;
-  position: relative;
-}
-.faq-item summary::-webkit-details-marker { display: none; }
-.faq-item summary::after {
-  content: "+";
-  position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
-  font-size: 1.4rem; color: var(--ss-gray-500); font-weight: 400;
-  transition: transform 0.15s ease;
-}
-.faq-item[open] summary::after { content: "−"; color: var(--ss-black); }
-.faq-item .faq-body { padding: 0 20px 18px; color: var(--ss-gray-900); }
-.faq-item .faq-body p:last-child { margin-bottom: 0; }
-.faq-cat { display: inline-block; background: var(--ss-yellow); padding: 2px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 600; margin-right: 8px; vertical-align: middle; }
-
-/* Hardware grid */
-.hw-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 16px 0; }
-.hw-card {
-  background: var(--ss-beige);
-  padding: 16px;
-  border-radius: var(--radius-m);
-  border: 1px solid var(--ss-beige-dark);
-}
-.hw-card h4 { font-size: 0.98rem; margin: 0 0 6px; }
-.hw-card .hw-meta { font-size: 0.8rem; color: var(--ss-gray-500); margin-bottom: 6px; }
-.hw-card p { font-size: 0.88rem; margin: 0; }
-
-/* Footer */
-.footer {
-  background: var(--ss-black);
-  color: var(--ss-beige);
-  padding: 56px 28px;
-  margin-top: 60px;
-}
-.footer-inner { max-width: var(--maxw); margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; }
-@media (max-width: 700px) { .footer-inner { grid-template-columns: 1fr; gap: 30px; } }
-.footer h4 { color: var(--ss-yellow); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
-.footer a { color: var(--ss-beige); text-decoration: none; display: block; padding: 4px 0; font-size: 0.94rem; }
-.footer a:hover { color: var(--ss-yellow); }
-.footer-about p { color: var(--ss-gray-500); font-size: 0.88rem; max-width: 360px; }
-.footer-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
-.footer-brand span { color: var(--ss-white); font-weight: 700; font-size: 1.1rem; }
-
-/* Hidden helpers */
-.hide { display: none !important; }
-.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-mark.hit { background: var(--ss-yellow); padding: 0 2px; border-radius: 2px; }
-
-/* Print friendly */
-@media print {
-  .topbar, .sidebar, .hero-chips, .footer, .faq-filter { display: none; }
-  .layout { grid-template-columns: 1fr; }
-  section.block { box-shadow: none; border: none; padding: 0; page-break-inside: avoid; }
-}
-</style>
-</head>
-
-<body>
-
-<!-- ================= TOP BAR ================= -->
-<header class="topbar">
-  <div class="topbar-inner">
-    <a class="brand" href="#start">
-      <!-- LOGO: Replace the SVG with an <img src="logo.png" class="brand-logo"> if you want to drop in your actual logo file -->
-      <svg class="brand-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Sweetspot">
-        <rect x="0" y="0" width="100" height="100" rx="22" fill="#FFED4E"/>
-        <path d="M56 22 a22 22 0 1 1 0 44 Z" fill="#1A1A1A"/>
-        <path d="M44 38 a22 22 0 1 0 0 44 Z" fill="#1A1A1A"/>
-        <circle cx="64" cy="74" r="6" fill="#1A1A1A"/>
-      </svg>
-      <div>
-        <div class="brand-name">Sweetspot POS</div>
-        <div class="brand-tag">Help Center</div>
-      </div>
-    </a>
-
-    <div class="search-wrap" id="topSearchWrap">
-      <label class="sr-only" for="topSearch">Search the help center</label>
-      <input id="topSearch" class="search-input" type="search" placeholder="Search the help center…" autocomplete="off" />
-      <div class="search-results" id="topSearchResults" role="listbox"></div>
-    </div>
-
-    <div class="lang-switch" aria-label="Language">
-      <a href="../" title="Byt till svenska">SV</a>
-      <a href="./" class="active" aria-current="page">EN</a>
-    </div>
-
-    <!-- SUPPORT-CONFIG: primary support button in the header -->
-    <a class="topbar-cta" href="#support">Get help</a>
-  </div>
-</header>
-
-<!-- ================= HERO ================= -->
-<section class="hero" id="start">
-  <div class="hero-inner">
-    <h1>How can we help you today?</h1>
-    <p>Guides, FAQ and practical help for Sweetspot POS — all in one place.</p>
-    <div class="search-wrap" id="heroSearchWrap">
-      <label class="sr-only" for="heroSearch">Search the help center</label>
-      <input id="heroSearch" class="search-input" type="search" placeholder="Try “reprint receipt”, “card terminal”, “refund”…" autocomplete="off" />
-      <div class="search-results" id="heroSearchResults"></div>
-    </div>
-    <div class="hero-chips">
-      <a class="hero-chip" href="#section-receipts">Reprint an earlier receipt</a>
-      <a class="hero-chip" href="#section-sales">Take payment</a>
-      <a class="hero-chip" href="#section-returns">Process a refund</a>
-      <a class="hero-chip" href="#section-eod">End of day</a>
-      <a class="hero-chip" href="#section-hardware">Recommended hardware</a>
-      <a class="hero-chip" href="#section-faq">FAQ</a>
-    </div>
-  </div>
-</section>
-
-<!-- ================= MAIN LAYOUT ================= -->
-<div class="layout">
-
-  <!-- -------- SIDEBAR -------- -->
-  <aside class="sidebar" aria-label="Table of contents">
-    <div class="sidebar-title">Get started</div>
-    <ul>
-      <li><a href="#section-start">Welcome</a></li>
-      <li><a href="#section-getting-started">Install &amp; sign in</a></li>
-      <li><a href="#section-overview">POS overview</a></li>
-    </ul>
-
-    <div class="sidebar-title">At the POS</div>
-    <ul>
-      <li><a href="#section-sales">Selling &amp; taking payment</a></li>
-      <li><a href="#section-discounts">Discounts</a></li>
-      <li><a href="#section-receipts">Receipts &amp; reprints</a></li>
-      <li><a href="#section-returns">Returns &amp; refunds</a></li>
-      <li><a href="#section-eod">End of Day (EOD)</a></li>
-    </ul>
-
-    <div class="sidebar-title">Admin &amp; backoffice</div>
-    <ul>
-      <li><a href="#section-backoffice">Backoffice in the POS</a></li>
-      <li><a href="#section-products">Products &amp; categories</a></li>
-      <li><a href="#section-stock">Stock management</a></li>
-      <li><a href="#section-users">Users &amp; permissions</a></li>
-      <li><a href="#section-reports">Reports (X-report)</a></li>
-    </ul>
-
-    <div class="sidebar-title">Equipment &amp; integrations</div>
-    <ul>
-      <li><a href="#section-hardware">Recommended hardware</a></li>
-      <li><a href="#section-terminals">Card terminals</a></li>
-      <li><a href="#section-integrations">Integrations</a></li>
-    </ul>
-
-    <div class="sidebar-title">Other</div>
-    <ul>
-      <li><a href="#section-faq">FAQ — common questions</a></li>
-      <li><a href="#section-manuals">Deep dives &amp; PDF manuals</a></li>
-      <li><a href="#support">Contact support</a></li>
-    </ul>
-  </aside>
-
-  <!-- -------- MAIN CONTENT -------- -->
-  <main class="content">
-
-    <!-- ============ WELCOME ============ -->
-    <section id="section-start" class="block">
-      <span class="section-eyebrow">Welcome</span>
-      <h2 style="margin-top:4px;">Sweetspot POS — your point of sale, clearly explained</h2>
-      <p>
-        Welcome to the Sweetspot POS Help Center. Here you'll find everything you need to get started, use the POS day-to-day, manage stock and admin, and connect peripherals and integrations.
-        Use the search bar above to quickly find what you're looking for, or browse through the menu on the left.
-      </p>
-
-      <div class="guide-grid" style="margin-top:18px;">
-        <a class="guide-card" href="#section-getting-started">
-          <h4>🚀 Install &amp; sign in</h4>
-          <p>First time — download the app, sign in and pick a register.</p>
-          <span class="arrow">→</span>
-        </a>
-        <a class="guide-card" href="#section-sales">
-          <h4>💳 Selling &amp; taking payment</h4>
-          <p>Add products, apply discounts and close the sale.</p>
-          <span class="arrow">→</span>
-        </a>
-        <a class="guide-card" href="#section-receipts">
-          <h4>🧾 Receipts &amp; reprints</h4>
-          <p>Reprint an earlier receipt, email it, and more.</p>
-          <span class="arrow">→</span>
-        </a>
-        <a class="guide-card" href="#section-returns">
-          <h4>↩️ Returns &amp; refunds</h4>
-          <p>Handle returns against a receipt or manually.</p>
-          <span class="arrow">→</span>
-        </a>
-        <a class="guide-card" href="#section-eod">
-          <h4>📊 End of Day (EOD)</h4>
-          <p>Count the till, bank the cash and reconcile.</p>
-          <span class="arrow">→</span>
-        </a>
-        <a class="guide-card" href="#section-hardware">
-          <h4>🖨️ Hardware</h4>
-          <p>Recommended iPads, printers, terminals and scanners.</p>
-          <span class="arrow">→</span>
-        </a>
-      </div>
-    </section>
-
-    <!-- ============ INSTALL & SIGN IN ============ -->
-    <section id="section-getting-started" class="block">
-      <span class="section-eyebrow">Get started</span>
-      <h2 style="margin-top:4px;">Install and sign in for the first time</h2>
-      <p>Sweetspot POS runs on iPad or iPhone. Follow the steps below the first time you set up a register.</p>
-
-      <h3>1. Download the app</h3>
-      <ol class="steps">
-        <li>Open the App Store on your iPad or iPhone.</li>
-        <li>Search for <strong>ExtendaGO POS</strong> and install the app. (Sweetspot POS runs on top of the ExtendaGO POS app.)</li>
-        <li>Wait for the download to finish, then open the app.</li>
-      </ol>
-
-      <h3>2. Sign in</h3>
-      <ol class="steps">
-        <li>Enter the sign-in credentials you received from Sweetspot when your account was set up.</li>
-        <li>Pick the correct <strong>store</strong> (if you have more than one).</li>
-        <li>Pick the correct <strong>register</strong> — each iPad is usually tied to a specific register.</li>
-      </ol>
-
-      <h3>3. Pick a cashier and enter the float</h3>
-      <ol class="steps">
-        <li>Pick the signed-in cashier's name (or enter a PIN code if your setup requires it).</li>
-        <li>Enter the <strong>cash float</strong> — the amount in the cash drawer at the start of the day.</li>
-        <li>Confirm, and you'll land on the sales view.</li>
-      </ol>
-
-      <div class="callout tip">
-        <strong>Tip</strong>
-        If the app shows a red status indicator next to the printer or terminal icon in the top menu — go to <em>Settings → Printer</em> or <em>Settings → Terminals</em> and connect the right equipment. See <a href="#section-hardware">Hardware</a>.
-      </div>
-    </section>
-
-    <!-- ============ OVERVIEW ============ -->
-    <section id="section-overview" class="block">
-      <span class="section-eyebrow">Overview</span>
-      <h2 style="margin-top:4px;">How the sales view is laid out</h2>
-      <p>Once signed in, you land on the sales view (<em>Sales window</em>). Here are the most important elements:</p>
-
-      <table class="info">
-        <thead><tr><th>Element</th><th>Function</th></tr></thead>
-        <tbody>
-          <tr><td><strong>Backoffice</strong> (top left)</td><td>Opens the POS admin view (sales stats, products, stock, settings).</td></tr>
-          <tr><td><strong>Sync icon</strong></td><td>Shows whether the register is online and synced with the cloud.</td></tr>
-          <tr><td><strong>Terminal status</strong></td><td>Shows whether the payment terminal is connected.</td></tr>
-          <tr><td><strong>Profile</strong></td><td>Shows the signed-in cashier. Sign the user out from here.</td></tr>
-          <tr><td><strong>Open cash drawer</strong></td><td>Opens the physical cash drawer without starting a sale.</td></tr>
-          <tr><td><strong>Search bar</strong></td><td>Search for products in your catalogue.</td></tr>
-          <tr><td><strong>Product and category grid</strong></td><td>Your products sorted into categories.</td></tr>
-          <tr><td><strong>Receipt view (right)</strong></td><td>Shows products added to the current sale.</td></tr>
-          <tr><td><strong>Discount</strong></td><td>Applies a discount on the selected product or the whole sale.</td></tr>
-          <tr><td><strong>Return</strong></td><td>Activates return mode (products are added as negative lines).</td></tr>
-          <tr><td><strong>Manual line</strong></td><td>Adds a line with a free-form price, for products that aren't in the catalogue.</td></tr>
-          <tr><td><strong>Park sale</strong></td><td>Saves the sale so you can pick it up again later.</td></tr>
-          <tr><td><strong>Cancel / Pay</strong></td><td>The red button cancels the sale entirely; the green button proceeds to payment.</td></tr>
-        </tbody>
-      </table>
-    </section>
-
-    <!-- ============ SELL & PAY ============ -->
-    <section id="section-sales" class="block">
-      <span class="section-eyebrow">At the POS</span>
-      <h2 style="margin-top:4px;">Selling products and taking payment</h2>
-
-      <h3>Add products to the receipt</h3>
-      <ol class="steps">
-        <li>Tap a product in the product grid, or search for it in the search bar. Alternatively — scan the barcode.</li>
-        <li>If the product has variants (size, color, etc.) — pick the correct variant.</li>
-        <li>The product is added to the receipt view on the right. Tap it there to change quantity, discount or variant.</li>
-      </ol>
-
-      <h3>Add a manual product</h3>
-      <p>If a customer wants to buy something that isn't in the catalogue, tap <strong>manual line</strong> and enter a description, price and VAT. Perfect for ad-hoc or unique items.</p>
-
-      <h3>Take payment</h3>
-      <ol class="steps">
-        <li>Tap the green <strong>Pay</strong> button.</li>
-        <li>Pick a payment method — card, cash, gift card, invoice, MobilePay and more (depending on your setup).</li>
-        <li>Follow the prompt for the chosen method. For card payments, the amount is sent to the card terminal.</li>
-        <li>The receipt is printed automatically on the receipt printer once payment is approved.</li>
-      </ol>
-
-      <h3>Park an ongoing sale</h3>
-      <p>If a customer needs to wait (e.g. grab something from the car), tap the <strong>Park</strong> button. You can now serve the next customer. Pick the parked sale back up from the parked-sales list.</p>
-
-      <h3>Split a bill</h3>
-      <p>In hospitality/restaurant setups you can split a sale across several people. Tap <strong>Share bill</strong> and select which lines go on each part.</p>
-    </section>
-
-    <!-- ============ DISCOUNTS ============ -->
-    <section id="section-discounts" class="block">
-      <span class="section-eyebrow">At the POS</span>
-      <h2 style="margin-top:4px;">Apply a discount</h2>
-      <p>You can add a discount to a single product or to the entire receipt.</p>
-
-      <h3>Discount on a single product</h3>
-      <ol class="steps">
-        <li>Tap the product in the receipt view.</li>
-        <li>Pick <strong>percentage discount</strong>, <strong>amount discount</strong>, or <strong>set a new price</strong>.</li>
-        <li>Enter the value and (optionally) a reason for the discount.</li>
-        <li>Tap <em>OK</em> — the discount appears immediately in the receipt view.</li>
-      </ol>
-
-      <h3>Discount on the whole receipt</h3>
-      <ol class="steps">
-        <li>Tap the <strong>Discount</strong> button in the toolbar.</li>
-        <li>Pick a discount type and value.</li>
-        <li>The discount is applied to every eligible line.</li>
-      </ol>
-
-      <div class="callout">
-        <strong>Good to know</strong>
-        If a discount comes from a campaign (marked as <em>Markdown</em>), it can't be edited or removed at the register. Campaigns are managed in the web backoffice.
-      </div>
-    </section>
-
-    <!-- ============ RECEIPTS ============ -->
-    <section id="section-receipts" class="block">
-      <span class="section-eyebrow">Receipts</span>
-      <h2 style="margin-top:4px;">Receipts and receipt copies</h2>
-
-      <h3 id="reprint-earlier-receipt">Reprint a receipt for an earlier sale</h3>
-      <p>The most common way to get a receipt copy directly from the register — for example when a customer calls in asking for a receipt from a past purchase.</p>
-      <ol class="steps">
-        <li>Tap the <strong>Backoffice</strong> button in the top-left corner of the sales view.</li>
-        <li>Go to <strong>Sale</strong> in the menu on the left.</li>
-        <li>Pick the <strong>Orders</strong> tab. All completed sales are listed, sorted by date. Use the <em>Date</em> button in the top right to filter by period.</li>
-        <li>Tap the order you want to print — you'll see what was sold and how it was paid.</li>
-        <li>Tap the <strong>printer icon</strong> to the right of the order to print a receipt copy, or the <strong>envelope icon</strong> (Order) to email the receipt.</li>
-      </ol>
-      <div class="callout tip">
-        <strong>Tip</strong>
-        If the printer icon doesn't appear — check that the cashier's role (Management / Owner / Staff) has permission to view <em>sales history</em> under <em>Users → Permissions</em>.
-      </div>
-
-      <h3>Send the receipt by email or SMS</h3>
-      <p>At the payment screen you can enter an email address or phone number before completing the sale — the receipt is then sent digitally. The same can be done after the fact via Backoffice → Sale → Orders, as above.</p>
-
-      <h3>Pro forma receipt</h3>
-      <p>Need to print a preliminary receipt (e.g. for a restaurant table that hasn't paid yet)? Use the <strong>Print bill</strong> button. This is a supporting document only — not a receipt.</p>
-
-      <h3>Cached receipts (printer offline)</h3>
-      <p>If the receipt printer is offline when a sale is closed, the receipt is saved to a print queue. Once the printer is back, a red badge appears on the printer icon — tap the icon and choose <strong>Print cached receipts</strong> to print them.</p>
-    </section>
-
-    <!-- ============ RETURNS ============ -->
-    <section id="section-returns" class="block">
-      <span class="section-eyebrow">At the POS</span>
-      <h2 style="margin-top:4px;">Returns and refunds</h2>
-
-      <h3>Return against a receipt (recommended)</h3>
-      <p>It's always best to process a return against the customer's original receipt — that way the correct price and VAT rate are filled in automatically.</p>
-      <ol class="steps">
-        <li>Tap the <strong>Return</strong> button (products in the receipt view now appear in red = return mode).</li>
-        <li>Scan the QR code on the customer's receipt, or type in the receipt number manually.</li>
-        <li>Pick the lines to return.</li>
-        <li>Fill in the <em>Reason for return</em>.</li>
-        <li>Tap <strong>Tender</strong> and pick how the customer should be refunded (the same payment method as the original purchase is the usual default).</li>
-      </ol>
-
-      <h3>Manual return (no receipt)</h3>
-      <p>Only do this if you can't locate the customer's original receipt:</p>
-      <ol class="steps">
-        <li>Tap <strong>Return</strong>.</li>
-        <li>Add the product being returned — or tap manual line if the product isn't in the catalogue.</li>
-        <li>Enter a reason for the return.</li>
-        <li>Complete the refund payment (cash or refund to card).</li>
-      </ol>
-
-      <div class="callout warn">
-        <strong>Important</strong>
-        While in return mode, all prices show as negative. Tap the Return button again to exit return mode before starting a new regular sale.
-      </div>
-    </section>
-
-    <!-- ============ END OF DAY ============ -->
-    <section id="section-eod" class="block">
-      <span class="section-eyebrow">At the POS</span>
-      <h2 style="margin-top:4px;">End of Day (EOD)</h2>
-      <p>At the end of the working day you reconcile the register — count cash, bank the deposit and confirm the totals.</p>
-
-      <ol class="steps">
-        <li>Tap the <strong>EOD</strong> button in the sales view.</li>
-        <li>Count the cash in the drawer and enter the amount in <strong>Cash in register</strong>.</li>
-        <li>Enter the amount going to the bank under <strong>Deposit to bank</strong> (any float you leave behind is deducted from the deposit).</li>
-        <li>Confirm the card payment total from the terminal's end-of-day report.</li>
-        <li>Tap <strong>Confirm</strong> — the system calculates whether it's a <em>balance match</em> or <em>balance mismatch</em>.</li>
-      </ol>
-
-      <div class="callout">
-        <strong>Tip</strong>
-        On a <em>balance mismatch</em> — double-check your count, and look for any untracked cash withdrawals or deposits during the day. The system logs the difference for audit purposes.
-      </div>
-
-      <h3>X-report (snapshot during the day)</h3>
-      <p>You can pull an <strong>X-report</strong> at any time via Backoffice → Reports. It shows sales, returns, discounts and cash status up to the current moment without closing the day.</p>
-    </section>
-
-    <!-- ============ BACKOFFICE ============ -->
-    <section id="section-backoffice" class="block">
-      <span class="section-eyebrow">Admin</span>
-      <h2 style="margin-top:4px;">Backoffice in the POS</h2>
-      <p>The backoffice inside the POS app lets you manage products, stock, users and settings directly on the iPad. Many of the same functions also live in the web backoffice (<a href="https://wbo-etail.wallmob.com/login" target="_blank" rel="noopener">wbo-etail.wallmob.com</a>) where they're often easier to work with on a larger screen.</p>
-
-      <div class="guide-grid">
-        <a class="guide-card" href="#section-products"><h4>Products &amp; categories</h4><p>Add, edit and remove articles.</p><span class="arrow">→</span></a>
-        <a class="guide-card" href="#section-stock"><h4>Stock management</h4><p>Top up, remove and count inventory.</p><span class="arrow">→</span></a>
-        <a class="guide-card" href="#section-users"><h4>Users</h4><p>Roles, PIN codes and permissions.</p><span class="arrow">→</span></a>
-        <a class="guide-card" href="#section-reports"><h4>Reports</h4><p>X-reports and sales stats.</p><span class="arrow">→</span></a>
-      </div>
-
-      <h3>Navigating to Backoffice</h3>
-      <ol class="steps">
-        <li>Tap the <strong>Backoffice</strong> button in the top-left corner of the sales view.</li>
-        <li>You land on a menu view with every admin function: Home, Sale, KPI, Inventory, Stock, Reports, Users, Settings.</li>
-        <li>Tap the <strong>Sales window</strong> button at the top to go back to the register.</li>
-      </ol>
-    </section>
-
-    <!-- ============ PRODUCTS ============ -->
-    <section id="section-products" class="block">
-      <span class="section-eyebrow">Admin</span>
-      <h2 style="margin-top:4px;">Products and categories</h2>
-
-      <h3>Add a new product</h3>
-      <ol class="steps">
-        <li>Go to <strong>Backoffice → Inventory → Products</strong> and tap the plus icon (+).</li>
-        <li>Enter a name, (optional) description, purchase price excl. VAT and sales price incl. VAT.</li>
-        <li>Enter the stock level.</li>
-        <li>(Optional) Add variants — e.g. size or color.</li>
-        <li>(Optional) Assign the product to one or more categories under <em>Add categories</em>. Without a category it ends up under <em>Other</em>.</li>
-        <li>(Optional) Add a product image.</li>
-        <li>Tap <strong>Add product</strong>.</li>
-      </ol>
-
-      <h3>Edit or delete a product</h3>
-      <p>Tap the pencil icon to the right of a product to open edit mode. When done — tap <strong>Edit product</strong>. To delete the product entirely, tap the red <strong>Remove</strong> button.</p>
-
-      <div class="callout warn">
-        <strong>Note</strong>
-        When you delete a product, it disappears from every store that had it in the catalogue. If the product has sales history, we recommend archiving it instead (remove it from the shelf category but keep the underlying record).
-      </div>
-
-      <h3>Categories</h3>
-      <p>Create categories via <em>Backoffice → Inventory → Categories → Add category</em>. Categories can be multi-level — pick an existing category as the <em>Top-category</em> when creating a sub-category.</p>
-    </section>
-
-    <!-- ============ STOCK ============ -->
-    <section id="section-stock" class="block">
-      <span class="section-eyebrow">Admin</span>
-      <h2 style="margin-top:4px;">Stock management</h2>
-
-      <h3>Add to stock</h3>
-      <ol class="steps">
-        <li>Go to <strong>Backoffice → Stock → Add to stock</strong>.</li>
-        <li>Tap the plus icon, pick a category and product.</li>
-        <li>Tap the pencil icon and enter the quantity to add.</li>
-        <li>Confirm. You can enter a <em>Reference ID</em> and description (e.g. a supplier invoice number).</li>
-      </ol>
-
-      <h3>Remove from stock</h3>
-      <p>Same procedure under the <strong>Remove from stock</strong> tab. Use it for shrinkage or internal consumption.</p>
-
-      <h3>Rolling count (single item)</h3>
-      <p>Under <strong>Count stock</strong> you can count a single product and set the actual balance. Good for ongoing spot checks during the day.</p>
-
-      <h3>Full inventory count</h3>
-      <ol class="steps">
-        <li>Go to <strong>Stocks → Stock</strong> in the GO CTRL app and pick the right stock location.</li>
-        <li>Go to <strong>Inventory counts</strong> and tap <em>Open a new, full item count</em>.</li>
-        <li>Pick store and currency, then tap <em>Create item count</em>.</li>
-        <li>Each team member signs in on their device and picks <em>Full items count → Participate in a full item count</em>.</li>
-        <li>Split responsibility between shelves/areas so everything gets counted exactly once.</li>
-        <li>Scan or search each article and enter the quantity.</li>
-        <li>When everyone is done — swipe left on the count and tap <strong>Send</strong>, confirm with <em>Submit and close</em>.</li>
-        <li>Open the web backoffice on PC → <strong>Item count → Products</strong>. Check counted vs. uncounted products, and adjust manually if needed.</li>
-        <li>Tap <strong>Update item count</strong>, then go to the <em>Details</em> tab and tap <strong>Close</strong>.</li>
-      </ol>
-
-      <div class="callout warn">
-        <strong>Note</strong>
-        Counting while the store is open isn't supported by the automation. If you count mid-day, you'll need to follow up with a rolling count and pull a sales report for the period.
-      </div>
-    </section>
-
-    <!-- ============ USERS ============ -->
-    <section id="section-users" class="block">
-      <span class="section-eyebrow">Admin</span>
-      <h2 style="margin-top:4px;">Users and permissions</h2>
-      <p>Manage who can do what at the register. There are three roles by default: <strong>Management</strong>, <strong>Owner</strong> and <strong>Staff</strong>.</p>
-
-      <h3>Add a user</h3>
-      <ol class="steps">
-        <li>Go to <strong>Backoffice → Users → Add user</strong>.</li>
-        <li>Enter a name and email address.</li>
-        <li>Pick a role via <em>Attach role</em>.</li>
-        <li>Recommended: set a PIN code for quick sign-in at the register.</li>
-        <li>(Optional) Add a profile picture.</li>
-        <li>Tap <strong>Add user</strong>.</li>
-      </ol>
-
-      <h3>Edit what a role can do</h3>
-      <p>Go to <strong>Users → Permission</strong>. Here you can, for example, set <em>Staff</em> so they can't process returns, view sales history, or edit products.</p>
-
-      <div class="callout tip">
-        <strong>Tip</strong>
-        Cashiers who often get asked for receipt copies need permission to view <em>Orders</em>/<em>Sales history</em>. Check this first when troubleshooting.
-      </div>
-    </section>
-
-    <!-- ============ REPORTS ============ -->
-    <section id="section-reports" class="block">
-      <span class="section-eyebrow">Admin</span>
-      <h2 style="margin-top:4px;">Reports</h2>
-
-      <h3>X-report</h3>
-      <p>An X-report is a snapshot of the day's sales and cash status <em>without</em> closing the day. Includes among other things:</p>
-      <ul>
-        <li>Products sold</li>
-        <li>Products returned</li>
-        <li>Cash drawer openings</li>
-        <li>Cash in register</li>
-        <li>Discount totals</li>
-      </ul>
-      <p>Pulled via <strong>Backoffice → Reports → X-reports</strong> and can be printed on the receipt printer.</p>
-
-      <h3>Sales stats</h3>
-      <p>Under <strong>Home → Sale</strong> you'll find revenue per hour, day, week and month as charts. Filter by any period with the <em>Date</em> button.</p>
-
-      <h3>KPI</h3>
-      <p>Under <strong>KPI</strong> you'll find the average basket size and margin per product — handy for quickly spotting what's making the most money.</p>
-    </section>
-
-    <!-- ============ HARDWARE ============ -->
-    <section id="section-hardware" class="block">
-      <span class="section-eyebrow">Hardware</span>
-      <h2 style="margin-top:4px;">Recommended hardware</h2>
-      <p>Sweetspot POS works with a wide range of equipment. Here's what we recommend — reach out to support if you're unsure what fits your setup.</p>
-
-      <h3>iPad and iPhone</h3>
-      <div class="hw-grid">
-        <div class="hw-card"><h4>iPad</h4><div class="hw-meta">iPadOS 13 or later</div><p>All modern iPads work — a newer model gives the best performance, especially when scanning and taking payment simultaneously.</p></div>
-        <div class="hw-card"><h4>iPhone</h4><div class="hw-meta">iOS 13 or later</div><p>Used for mobile POS and for the ExtendaGO CTRL app (stock, counts).</p></div>
-      </div>
-
-      <h3>Receipt printers</h3>
-      <div class="hw-grid">
-        <div class="hw-card"><h4>Star mC-Print3</h4><div class="hw-meta">LAN + USB hub</div><p>The standard choice. Supports cash drawer, scanner and customer display from a single unit.</p></div>
-        <div class="hw-card"><h4>Star mPOP</h4><div class="hw-meta">Printer + cash drawer</div><p>Combined unit. Compact option for smaller registers.</p></div>
-        <div class="hw-card"><h4>Epson TM-T88VI</h4><div class="hw-meta">BT / LAN / WiFi</div><p>Fast printer (300mm/s) for high-volume stores.</p></div>
-        <div class="hw-card"><h4>Star TSP143IIIU</h4><div class="hw-meta">USB</div><p>Budget-friendly — doesn't support every scanner though.</p></div>
-        <div class="hw-card"><h4>Seiko RP-F10</h4><div class="hw-meta">USB / USB-C / BT</div><p>Compact design, IPx1 splash rating on some models.</p></div>
-      </div>
-
-      <h3 id="section-terminals">Card terminals</h3>
-      <div class="hw-grid">
-        <div class="hw-card"><h4>SumUp Air / Solo</h4><div class="hw-meta">Bluetooth / WiFi</div><p>Low hardware cost, simple setup — good for smaller shops.</p></div>
-        <div class="hw-card"><h4>Verifone P400 / M400</h4><div class="hw-meta">Ethernet / WiFi</div><p>Stationary terminal. Most common in traditional registers.</p></div>
-        <div class="hw-card"><h4>Verifone e285 (Adyen)</h4><div class="hw-meta">WiFi</div><p>Handheld terminal with Adyen as acquirer.</p></div>
-        <div class="hw-card"><h4>Ingenico Move 3500/5000</h4><div class="hw-meta">WiFi / 4G</div><p>Mobile terminal from Nets.</p></div>
-        <div class="hw-card"><h4>Zettle Reader 2</h4><div class="hw-meta">Bluetooth</div><p>Quick to get running — good as a backup terminal.</p></div>
-        <div class="hw-card"><h4>Adyen NYC1</h4><div class="hw-meta">Bluetooth (BLE)</div><p>Long battery life, handheld.</p></div>
-      </div>
-
-      <h3>Scanners</h3>
-      <div class="hw-grid">
-        <div class="hw-card"><h4>Zebra DS9208 / DS9308</h4><div class="hw-meta">USB</div><p>2D counter scanner. High speed; requires Star mC-Print3 when using USB pass-through.</p></div>
-        <div class="hw-card"><h4>Zebra CS4070 / CS6080</h4><div class="hw-meta">Bluetooth 2D</div><p>For mobile use — e.g. on the sales floor.</p></div>
-        <div class="hw-card"><h4>Socket Mobile S700 / S820</h4><div class="hw-meta">Bluetooth</div><p>S700 for the counter, S820 for mobile use.</p></div>
-      </div>
-
-      <h3>Other</h3>
-      <div class="hw-grid">
-        <div class="hw-card"><h4>Cash drawer (APG Entry Level)</h4><p>Connects through the printer. No direct connection to the iPad needed.</p></div>
-        <div class="hw-card"><h4>Customer display Star SCD222</h4><p>Requires Star mC-Print3. USB connection.</p></div>
-        <div class="hw-card"><h4>Label printer Zebra ZD421 / GK420</h4><p>Used with the ExtendaGO app for price labels.</p></div>
-      </div>
-
-      <div class="callout tip">
-        <strong>Configure printers &amp; terminals</strong>
-        Go to <strong>Backoffice → Settings → Printer</strong> or <strong>Settings → Terminals</strong> to connect the equipment. Pick the right connection type (Bluetooth, WiFi, SumUp).
-      </div>
-    </section>
-
-    <!-- ============ INTEGRATIONS ============ -->
-    <section id="section-integrations" class="block">
-      <span class="section-eyebrow">Integrations</span>
-      <h2 style="margin-top:4px;">Integrations</h2>
-      <p>Sweetspot POS can connect to a range of external services. Here are the most common ones — see the official guides for step-by-step instructions.</p>
-
-      <table class="info">
-        <thead><tr><th>Service</th><th>Used for</th><th>Guide</th></tr></thead>
-        <tbody>
-          <tr><td>Visma eAccounting</td><td>Automatic accounting of sales</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/05/how-to-set-up-eaccounting-in-5-minutes-ok.pdf" target="_blank" rel="noopener">Setup guide ↗</a></td></tr>
-          <tr><td>Shopify</td><td>Web shop ↔ POS sync</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/01/extendago-shopify.pdf" target="_blank" rel="noopener">Setup guide ↗</a></td></tr>
-          <tr><td>WooCommerce</td><td>Web shop ↔ POS sync</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/05/extendago-woocommerce-import.pdf" target="_blank" rel="noopener">Setup guide ↗</a></td></tr>
-          <tr><td>Voyado</td><td>Loyalty, CRM, customer club</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/05/english-extendago-pos-voyado.pdf" target="_blank" rel="noopener">Setup guide ↗</a></td></tr>
-          <tr><td>Dintero</td><td>Payments (Norwegian market)</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2024/02/setup-dintero.pdf" target="_blank" rel="noopener">Setup guide ↗</a></td></tr>
-          <tr><td>MobilePay</td><td>Mobile payments</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/05/mobilepay-integration-manual-ok.pdf" target="_blank" rel="noopener">Setup guide ↗</a></td></tr>
-          <tr><td>Kibana</td><td>Advanced data analytics</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/05/kibana-setup.pdf" target="_blank" rel="noopener">Setup guide ↗</a></td></tr>
-          <tr><td>Sharespine</td><td>Accounting-system connector</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2025/01/extendago-x-sharespine-accounting-integration-guide.pdf" target="_blank" rel="noopener">Setup guide ↗</a></td></tr>
-          <tr><td>GBAT10</td><td>Receipt reporting (fiscal)</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/05/gbat10-mapping.pdf" target="_blank" rel="noopener">Mapping ↗</a></td></tr>
-        </tbody>
-      </table>
-
-      <div class="callout">
-        <strong>Thinking about connecting something else?</strong>
-        Get in touch with support — we have experience with more integrations than the ones listed here, and we're happy to help you find a solution.
-      </div>
-    </section>
-
-    <!-- ============ FAQ ============ -->
-    <section id="section-faq" class="block">
-      <span class="section-eyebrow">FAQ</span>
-      <h2 style="margin-top:4px;">Common questions</h2>
-      <p>Quick answers to questions we often get from customers. Can't find what you're looking for? Use the search bar above or <a href="#support">contact support</a>.</p>
-
-      <div class="faq-filter" id="faqFilter">
-        <!-- buttons are rendered by JS based on categories in faqData -->
-      </div>
-
-      <div id="faqList"><!-- FAQ rendered here by JS --></div>
-    </section>
-
-    <!-- ============ MANUALS ============ -->
-    <section id="section-manuals" class="block">
-      <span class="section-eyebrow">Deep dives</span>
-      <h2 style="margin-top:4px;">PDF manuals for deep dives</h2>
-      <p>Need a more exhaustive reference? These PDFs are the official manuals that underpin most of the content here.</p>
-      <table class="info">
-        <tbody>
-          <tr><td>POS Manual — Sales and use of registers</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/05/extendago-pos-manual-sales-and-use-of-registers-3.pdf" target="_blank" rel="noopener">Open PDF ↗</a></td></tr>
-          <tr><td>POS Manual — Backoffice in the POS</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/05/pos-manual-backoffice-3.pdf" target="_blank" rel="noopener">Open PDF ↗</a></td></tr>
-          <tr><td>Backoffice (web) — features</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/05/backoffice-manual-features-1.pdf" target="_blank" rel="noopener">Open PDF ↗</a></td></tr>
-          <tr><td>Backoffice — parameters</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/05/backoffice-parameters-1.pdf" target="_blank" rel="noopener">Open PDF ↗</a></td></tr>
-          <tr><td>Inventory guide</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/12/inventory-guidance-extendago-pos.pdf" target="_blank" rel="noopener">Open PDF ↗</a></td></tr>
-          <tr><td>Gift cards, Voucher, Discounts &amp; Campaigns</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/05/backoffice-manual-gift-cards-voucher-discounts-and-campaigns-2.pdf" target="_blank" rel="noopener">Open PDF ↗</a></td></tr>
-          <tr><td>Hardware recommendations</td><td><a href="https://www.extendago.com/wp-content/uploads/sites/3/2023/10/hardware-recommendations-extendago-compressed-compressed.pdf" target="_blank" rel="noopener">Open PDF ↗</a></td></tr>
-          <tr><td>Release notes (latest versions)</td><td><a href="https://www.extendago.com/release-notes-and-new-features/" target="_blank" rel="noopener">Open page ↗</a></td></tr>
-        </tbody>
-      </table>
-    </section>
-
-    <!-- ============ SUPPORT ============ -->
-    <section id="support" class="block">
-      <span class="section-eyebrow">Support</span>
-      <h2 style="margin-top:4px;">Get in touch</h2>
-      <p>Couldn't find the answer you needed? We always reply as quickly as we can.</p>
-      <!-- SUPPORT-CONFIG: change contact details here -->
-      <div class="guide-grid">
-        <a class="guide-card" href="https://club.sweetspot.io/login" target="_blank" rel="noopener">
-          <h4>💬 Chat with us</h4>
-          <p>The fastest route — the chat lives in our backoffice when you're signed in.</p>
-          <span class="arrow">Open backoffice →</span>
-        </a>
-        <a class="guide-card" href="mailto:hello@sweetspot.io">
-          <h4>✉️ Email</h4>
-          <p>Send your request to <strong>hello@sweetspot.io</strong> — we usually reply within one business day.</p>
-          <span class="arrow">Write to us →</span>
-        </a>
-        <a class="guide-card" href="https://sweetspot.statuspage.io/" target="_blank" rel="noopener">
-          <h4>⚙️ Service status</h4>
-          <p>Is something down? Check the public status page.</p>
-          <span class="arrow">View status →</span>
-        </a>
-      </div>
-    </section>
-
-  </main>
-</div>
-
-<!-- ================= FOOTER ================= -->
-<footer class="footer">
-  <div class="footer-inner">
-    <div class="footer-about">
-      <div class="footer-brand">
-        <svg viewBox="0 0 100 100" width="38" height="38" xmlns="http://www.w3.org/2000/svg">
-          <rect x="0" y="0" width="100" height="100" rx="22" fill="#FFED4E"/>
-          <path d="M56 22 a22 22 0 1 1 0 44 Z" fill="#1A1A1A"/>
-          <path d="M44 38 a22 22 0 1 0 0 44 Z" fill="#1A1A1A"/>
-          <circle cx="64" cy="74" r="6" fill="#1A1A1A"/>
-        </svg>
-        <span>Sweetspot POS</span>
-      </div>
-      <p>Help center for our point-of-sale system. Content is updated continuously — let us know if anything's missing!</p>
-    </div>
-
-    <div>
-      <h4>Quick links</h4>
-      <a href="#section-getting-started">Get started</a>
-      <a href="#section-receipts">Receipts &amp; reprints</a>
-      <a href="#section-hardware">Hardware</a>
-      <a href="#section-integrations">Integrations</a>
-      <a href="#section-faq">FAQ</a>
-    </div>
-
-    <div>
-      <h4>Contact</h4>
-      <a href="mailto:hello@sweetspot.io">hello@sweetspot.io</a>
-      <a href="https://club.sweetspot.io/login" target="_blank" rel="noopener">Chat in backoffice ↗</a>
-      <a href="https://sweetspot.statuspage.io/" target="_blank" rel="noopener">Service status ↗</a>
-      <a href="https://sweetspot.io/" target="_blank" rel="noopener">sweetspot.io ↗</a>
-    </div>
-  </div>
-</footer>
-
-<!-- ================= FAQ DATA ================= -->
-<!--
-  UPDATE FAQ HERE:
-  Each question is an object with the fields "category", "question" and "answer".
-  Add a new question by copying an existing object and changing the text.
-  Remember commas between objects and NO comma after the last one.
-  If the answer contains line breaks — use \n.
--->
-<script id="faq-data" type="application/json">
-[
-  {
-    "category": "Receipts",
-    "question": "How do I reprint a receipt for an earlier sale?",
-    "answer": "Tap the Backoffice button in the top-left corner of the sales view. Go to Sale → Orders, filter by date if needed, tap the order and then tap the printer icon on the right. See also the full guide under 'Receipts & reprints'."
-  },
-  {
-    "category": "Receipts",
-    "question": "Can I email or text the receipt instead of printing it?",
-    "answer": "Yes. Either enter the customer's email/phone number directly on the payment screen before closing the sale, or go to Backoffice → Sale → Orders afterwards and tap the envelope icon next to the order."
-  },
-  {
-    "category": "Receipts",
-    "question": "The receipt never printed — is the sale still recorded?",
-    "answer": "Yes, the sale is recorded in the database even if the printer was offline. The receipt goes into the print queue and shows as a red badge on the printer icon. Tap the icon and pick 'Print cached receipts' once the printer is back."
-  },
-  {
-    "category": "Returns",
-    "question": "How do I process a return against a receipt?",
-    "answer": "Tap the Return button at the register. Scan the QR code on the customer's receipt (or type in the receipt number). Pick the lines to return, fill in a reason and tap Tender. Pick the same payment method as the original sale for the smoothest refund."
-  },
-  {
-    "category": "Returns",
-    "question": "What do I do if the customer lost their receipt?",
-    "answer": "Ask for the customer's name/phone number/last digits of the payment card and look up the sale under Backoffice → Sale → Orders. Reprint a copy of the receipt and process the return against it. As a last resort, process a manual return — but then price and VAT have to be entered manually."
-  },
-  {
-    "category": "Payment",
-    "question": "The card terminal doesn't respond to payment — what do I do?",
-    "answer": "1) Check that the terminal status icon at the register is green. 2) Restart the terminal. 3) Go to Backoffice → Settings → Terminals and confirm the right integration (Bluetooth, WiFi, SumUp) is selected. 4) If it still doesn't work — contact support."
-  },
-  {
-    "category": "Payment",
-    "question": "Can we accept several payment methods on the same sale (e.g. part card, part cash)?",
-    "answer": "Yes. On the payment screen — tap the first payment method and enter a partial amount. Then pick the next payment method for the rest, until the total is covered."
-  },
-  {
-    "category": "Payment",
-    "question": "Can a customer pay with multiple gift cards?",
-    "answer": "Yes. The system accepts multiple gift cards on the same sale. The balance on each gift card is shown on the receipt."
-  },
-  {
-    "category": "End of Day",
-    "question": "What's the difference between an X-report and End of Day (EOD)?",
-    "answer": "The X-report is a snapshot of the day's sales that can be pulled at any time without closing the day. EOD closes the day — counts cash, records the bank deposit and creates a final Z-report."
-  },
-  {
-    "category": "End of Day",
-    "question": "What happens if there's a 'balance mismatch' at EOD?",
-    "answer": "The system still accepts the end-of-day, but logs the difference. Check that the cash was counted correctly and that no untracked withdrawals/deposits happened. If a difference keeps coming back — review your float and cash-handling routines."
-  },
-  {
-    "category": "Products",
-    "question": "How do I add a new product?",
-    "answer": "Backoffice → Inventory → Products → plus icon. Enter name, purchase price, sales price and stock. Assign a category so the product shows up in the right tile on the sales view. You can also do this on the web (wbo-etail.wallmob.com) — often easier when adding many products at once."
-  },
-  {
-    "category": "Products",
-    "question": "Can I import products from an Excel file?",
-    "answer": "Yes. The web backoffice has an import/export function that accepts CSV files. See the official guide 'Import / Export products' under Deep dives."
-  },
-  {
-    "category": "Stock",
-    "question": "How do I run a full inventory count?",
-    "answer": "Use the ExtendaGO CTRL app: go to Stocks → Stock → Inventory counts → 'Open a new full item count'. Split the counting areas across the team, scan/count every article, tap Send when everyone is done. Finish up in the web backoffice under Item count → Update item count → Close."
-  },
-  {
-    "category": "Stock",
-    "question": "Can I count stock during opening hours?",
-    "answer": "Yes, but the automation isn't guaranteed to reconcile. Pull a sales report for the period and count again as a rolling count. For best accuracy — count after closing."
-  },
-  {
-    "category": "Users",
-    "question": "How do I change a user's permissions?",
-    "answer": "Backoffice → Users → Permission. Pick the role (Management, Owner or Staff) and check/uncheck what the role should be allowed to do. The role is applied per user under the Users tab."
-  },
-  {
-    "category": "Users",
-    "question": "A cashier can't find the Orders tab in the backoffice — what's wrong?",
-    "answer": "Almost always a permissions issue. Go to Users → Permission and confirm the role (often 'Staff') has permission to view sales history."
-  },
-  {
-    "category": "Hardware",
-    "question": "Which iPad do you recommend?",
-    "answer": "Any iPad running iPadOS 13 or later works. Newer models give the best performance — especially when scanning and using the card terminal at the same time. Common picks: iPad (10th gen) or iPad Air."
-  },
-  {
-    "category": "Hardware",
-    "question": "Why won't the cash drawer open?",
-    "answer": "The cash drawer connects through the receipt printer, not directly to the iPad. Check 1) that the printer is connected and green at the register, 2) that the right 'active high/low' polarity is set in the printer's settings (Star, Epson and Seiko are configurable), and 3) that the cable is in the correct port on the printer."
-  },
-  {
-    "category": "Hardware",
-    "question": "Can I use any card terminal?",
-    "answer": "Not exactly — Sweetspot POS supports a selection of terminals through various acquirers (SumUp, Adyen, Nets, Zettle, Dintero and more). See the Recommended hardware section for the full list. When in doubt — check with us before you buy."
-  },
-  {
-    "category": "Integrations",
-    "question": "Can Sweetspot POS send sales automatically to our accounting system?",
-    "answer": "Yes. We have ready-made integrations with Visma eAccounting, Fortnox (via Sharespine) and more. See the Integrations section for setup guides."
-  },
-  {
-    "category": "Integrations",
-    "question": "Does Sweetspot POS sync with Shopify / WooCommerce?",
-    "answer": "Yes — products, stock and orders can sync both ways. Requires initial configuration. See the setup guides under Integrations."
-  },
-  {
-    "category": "General",
-    "question": "Where do I sign in to the web backoffice?",
-    "answer": "https://wbo-etail.wallmob.com/login — use the same login as the register app. From there you manage products, campaigns, users and reports on a larger screen."
-  },
-  {
-    "category": "General",
-    "question": "Is there a service status page?",
-    "answer": "Yes — https://sweetspot.statuspage.io/ shows the current status of all our services. Worth a look if something feels slow or broken."
-  }
-]
-</script>
-
-<!-- ================= JAVASCRIPT ================= -->
-<script>
-(function () {
-  'use strict';
-
-  // ---------- Load FAQ ----------
-  const faqDataRaw = document.getElementById('faq-data').textContent;
-  let faqData = [];
-  try { faqData = JSON.parse(faqDataRaw); }
-  catch (e) { console.error('FAQ JSON failed to parse:', e); }
-
-  // ---------- Render FAQ ----------
-  const faqList = document.getElementById('faqList');
-  const faqFilter = document.getElementById('faqFilter');
-  const categories = Array.from(new Set(faqData.map(f => f.category)));
-
-  function renderFilter(activeCat) {
-    faqFilter.innerHTML = '';
-    const all = document.createElement('button');
-    all.textContent = 'All';
-    all.classList.toggle('active', !activeCat);
-    all.addEventListener('click', () => renderFaq(null));
-    faqFilter.appendChild(all);
-    categories.forEach(c => {
-      const b = document.createElement('button');
-      b.textContent = c;
-      b.classList.toggle('active', c === activeCat);
-      b.addEventListener('click', () => renderFaq(c));
-      faqFilter.appendChild(b);
-    });
-  }
-
-  function renderFaq(activeCat) {
-    renderFilter(activeCat);
-    faqList.innerHTML = '';
-    const items = activeCat ? faqData.filter(f => f.category === activeCat) : faqData;
-    if (items.length === 0) { faqList.innerHTML = '<p>No questions in this category yet.</p>'; return; }
-    items.forEach(f => {
-      const d = document.createElement('details');
-      d.className = 'faq-item';
-      d.innerHTML = `
-        <summary><span class="faq-cat">${escapeHtml(f.category)}</span>${escapeHtml(f.question)}</summary>
-        <div class="faq-body">${linkify(escapeHtml(f.answer))}</div>
-      `;
-      faqList.appendChild(d);
-    });
-  }
-
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
-  }
-  function linkify(s) {
-    return s.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>')
-            .replace(/\n/g, '<br>');
-  }
-
-  renderFaq(null);
-
-  // ---------- Build search index ----------
-  // We index: every section + every FAQ question
-  function buildIndex() {
-    const idx = [];
-    // Sections
-    document.querySelectorAll('section.block').forEach(sec => {
-      const h2 = sec.querySelector('h2');
-      if (!h2) return;
-      const title = h2.textContent.trim();
-      const text = sec.textContent.replace(/\s+/g, ' ').trim();
-      const eyebrow = (sec.querySelector('.section-eyebrow') || {}).textContent || 'Guide';
-      idx.push({ type: 'section', id: sec.id, title, text, category: eyebrow.trim() });
-    });
-    // FAQ
-    faqData.forEach(f => {
-      idx.push({
-        type: 'faq', id: 'section-faq',
-        title: f.question, text: f.answer, category: 'FAQ · ' + f.category
-      });
-    });
-    return idx;
-  }
-  const searchIndex = buildIndex();
-
-  // ---------- Search ----------
-  function doSearch(q) {
-    q = q.trim().toLowerCase();
-    if (!q) return [];
-    const terms = q.split(/\s+/).filter(Boolean);
-    const results = [];
-    searchIndex.forEach(entry => {
-      const hay = (entry.title + ' ' + entry.text).toLowerCase();
-      let score = 0;
-      let allMatch = true;
-      terms.forEach(t => {
-        const titleHits = (entry.title.toLowerCase().match(new RegExp(escapeRegex(t), 'g')) || []).length;
-        const bodyHits  = (hay.match(new RegExp(escapeRegex(t), 'g')) || []).length;
-        if (!bodyHits) allMatch = false;
-        score += titleHits * 10 + bodyHits;
-      });
-      if (allMatch && score > 0) results.push({ entry, score });
-    });
-    results.sort((a, b) => b.score - a.score);
-    return results.slice(0, 10);
-  }
-  function escapeRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
-
-  function snippet(text, terms) {
-    const lower = text.toLowerCase();
-    let pos = -1;
-    for (const t of terms) { const p = lower.indexOf(t); if (p >= 0) { pos = p; break; } }
-    if (pos < 0) pos = 0;
-    const start = Math.max(0, pos - 40);
-    const end = Math.min(text.length, pos + 180);
-    let s = text.slice(start, end);
-    if (start > 0) s = '…' + s;
-    if (end < text.length) s = s + '…';
-    // Highlight
-    terms.forEach(t => {
-      s = s.replace(new RegExp('(' + escapeRegex(t) + ')', 'gi'), '<mark>$1</mark>');
-    });
-    return s;
-  }
-
-  function setupSearch(inputId, resultsId) {
-    const input = document.getElementById(inputId);
-    const results = document.getElementById(resultsId);
-    if (!input || !results) return;
-    let active = -1;
-
-    input.addEventListener('input', () => {
-      const q = input.value;
-      const hits = doSearch(q);
-      if (!q.trim()) { results.classList.remove('active'); results.innerHTML = ''; return; }
-      results.innerHTML = '';
-      if (hits.length === 0) {
-        results.innerHTML = '<div class="search-empty">No results for “' + escapeHtml(q) + '”</div>';
-      } else {
-        const terms = q.trim().toLowerCase().split(/\s+/);
-        hits.forEach((h, i) => {
-          const a = document.createElement('a');
-          a.className = 'search-result-item';
-          a.href = '#' + h.entry.id;
-          a.innerHTML = `
-            <div class="sr-cat">${escapeHtml(h.entry.category)}</div>
-            <div class="sr-title">${escapeHtml(h.entry.title)}</div>
-            <div class="sr-snippet">${snippet(h.entry.text, terms)}</div>
-          `;
-          a.addEventListener('click', () => {
-            results.classList.remove('active');
-            input.value = '';
-          });
-          results.appendChild(a);
-        });
-      }
-      results.classList.add('active');
-      active = -1;
-    });
-
-    input.addEventListener('keydown', (e) => {
-      const items = results.querySelectorAll('.search-result-item');
-      if (e.key === 'ArrowDown') { e.preventDefault(); active = Math.min(active + 1, items.length - 1); items[active] && items[active].focus(); }
-      else if (e.key === 'ArrowUp') { e.preventDefault(); active = Math.max(active - 1, 0); items[active] && items[active].focus(); }
-      else if (e.key === 'Escape') { results.classList.remove('active'); input.blur(); }
-      else if (e.key === 'Enter' && items[0]) { items[0].click(); }
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!results.contains(e.target) && e.target !== input) results.classList.remove('active');
-    });
-
-    input.addEventListener('focus', () => {
-      if (input.value.trim() && results.children.length) results.classList.add('active');
-    });
-  }
-
-  setupSearch('topSearch', 'topSearchResults');
-  setupSearch('heroSearch', 'heroSearchResults');
-
-  // ---------- Sidebar active-state on scroll ----------
-  const sideLinks = document.querySelectorAll('.sidebar a');
-  const linkMap = {};
-  sideLinks.forEach(a => { linkMap[a.getAttribute('href').slice(1)] = a; });
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      const id = e.target.id;
-      const link = linkMap[id];
-      if (!link) return;
-      if (e.isIntersecting) {
-        sideLinks.forEach(l => l.classList.remove('active'));
-        link.classList.add('active');
-      }
-    });
-  }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
-
-  document.querySelectorAll('section.block').forEach(s => observer.observe(s));
-
-})();
-</script>
-
-</body>
-</html>
+Sweetspot POS
+Help Center
+Search the help center
+SV
+EN
+Get help
+How can we help you today?
+Guides, FAQ and practical help for Sweetspot POS — all in one place.
+Search the help center
+Reprint an earlier receipt
+Take payment
+Process a refund
+End of day
+Recommended hardware
+FAQ
+GET STARTED
+	•	Welcome
+	•	Install & sign in
+	•	POS overview
+AT THE POS
+	•	Selling & taking payment
+	•	Discounts
+	•	Receipts & reprints
+	•	Returns & refunds
+	•	End of Day (EOD)
+ADMIN & BACKOFFICE
+	•	Backoffice in the POS
+	•	Products & categories
+	•	Stock management
+	•	Users & permissions
+	•	Reports (X-report)
+EQUIPMENT & INTEGRATIONS
+	•	Recommended hardware
+	•	Card terminals
+	•	Integrations
+OTHER
+	•	FAQ — common questions
+	•	Deep dives & PDF manuals
+	•	Contact support
+WELCOME
+Sweetspot POS — your point of sale, clearly explained
+Welcome to the Sweetspot POS Help Center. Here you'll find everything you need to get started, use the POS day-to-day, manage stock and admin, and connect peripherals and integrations. Use the search bar above to quickly find what you're looking for, or browse through the menu on the left.
+🚀 Install & sign in
+First time — download the app, sign in and pick a register.
+→
+💳 Selling & taking payment
+Add products, apply discounts and close the sale.
+→
+🧾 Receipts & reprints
+Reprint an earlier receipt, email it, and more.
+→
+↩️ Returns & refunds
+Handle returns against a receipt or manually.
+→
+📊 End of Day (EOD)
+Count the till, bank the cash and reconcile.
+→
+🖨️ Hardware
+Recommended iPads, printers, terminals and scanners.
+→
+GET STARTED
+Install and sign in for the first time
+Sweetspot POS runs on iPad or iPhone. Follow the steps below the first time you set up a register.
+1. Download the app
+	1	Open the App Store on your iPad or iPhone.
+	2	Search for ExtendaGO POS and install the app. (Sweetspot POS runs on top of the ExtendaGO POS app.)
+	3	Wait for the download to finish, then open the app.
+2. Sign in
+	1	Enter the sign-in credentials you received from Sweetspot when your account was set up.
+	2	Pick the correct store (if you have more than one).
+	3	Pick the correct register — each iPad is usually tied to a specific register.
+3. Pick a cashier and enter the float
+	1	Pick the signed-in cashier's name (or enter a PIN code if your setup requires it).
+	2	Enter the cash float — the amount in the cash drawer at the start of the day.
+	3	Confirm, and you'll land on the sales view.
+TIP
+If the app shows a red status indicator next to the printer or terminal icon in the top menu — go to Settings → Printer or Settings → Terminals and connect the right equipment. See Hardware.
+OVERVIEW
+How the sales view is laid out
+Once signed in, you land on the sales view (Sales window). Here are the most important elements:
+Element
+Function
+Backoffice (top left)
+Opens the POS admin view (sales stats, products, stock, settings).
+Sync icon
+Shows whether the register is online and synced with the cloud.
+Terminal status
+Shows whether the payment terminal is connected.
+Profile
+Shows the signed-in cashier. Sign the user out from here.
+Open cash drawer
+Opens the physical cash drawer without starting a sale.
+Search bar
+Search for products in your catalogue.
+Product and category grid
+Your products sorted into categories.
+Receipt view (right)
+Shows products added to the current sale.
+Discount
+Applies a discount on the selected product or the whole sale.
+Return
+Activates return mode (products are added as negative lines).
+Manual line
+Adds a line with a free-form price, for products not in the catalogue.
+Park sale
+Saves the sale so you can pick it up again later.
+Cancel / Pay
+Red button cancels the sale; green button proceeds to payment.
+AT THE POS
+Selling products and taking payment
+Add products to the receipt
+	1	Tap a product in the product grid, or search for it in the search bar. Alternatively — scan the barcode.
+	2	If the product has variants (size, color, etc.) — pick the correct variant.
+	3	The product is added to the receipt view on the right. Tap it there to change quantity, discount or variant.
+Add a manual product
+If a customer wants to buy something that isn't in the catalogue, tap manual line and enter a description, price and VAT. Perfect for ad-hoc or unique items.
+Take payment
+	1	Tap the green Pay button.
+	2	Pick a payment method — card, cash, gift card, invoice, MobilePay and more (depending on your setup).
+	3	Follow the prompt for the chosen method. For card payments, the amount is sent to the card terminal.
+	4	The receipt is printed automatically on the receipt printer once payment is approved.
+Park an ongoing sale
+If a customer needs to wait (e.g. grab something from the car), tap the Park button. You can now serve the next customer. Pick the parked sale back up from the parked-sales list.
+Split a bill
+In hospitality/restaurant setups you can split a sale across several people. Tap Share bill and select which lines go on each part.
+AT THE POS
+Apply a discount
+You can add a discount to a single product or to the entire receipt.
+Discount on a single product
+	1	Tap the product in the receipt view.
+	2	Pick percentage discount, amount discount, or set a new price.
+	3	Enter the value and (optionally) a reason for the discount.
+	4	Tap OK — the discount appears immediately in the receipt view.
+Discount on the whole receipt
+	1	Tap the Discount button in the toolbar.
+	2	Pick a discount type and value.
+	3	The discount is applied to every eligible line.
+GOOD TO KNOW
+If a discount comes from a campaign (marked as Markdown), it can't be edited or removed at the register. Campaigns are managed in the web backoffice.
+RECEIPTS
+Receipts and receipt copies
+Reprint a receipt for an earlier sale
+The most common way to get a receipt copy directly from the register.
+	1	Tap the Backoffice button in the top-left corner of the sales view.
+	2	Go to Sale in the menu on the left.
+	3	Pick the Orders tab. All completed sales are listed, sorted by date. Use the Date button in the top right to filter by period.
+	4	Tap the order you want to print — you'll see what was sold and how it was paid.
+	5	Tap the printer icon to print a receipt copy, or the envelope icon to email it.
+TIP
+If the printer icon doesn't appear — check that the cashier's role has permission to view sales history under Users → Permissions.
+Send the receipt by email or SMS
+At the payment screen you can enter an email address or phone number before completing the sale. The same can be done after the fact via Backoffice → Sale → Orders.
+Pro forma receipt
+Need to print a preliminary receipt (e.g. for a restaurant table that hasn't paid yet)? Use the Print bill button. This is a supporting document only — not a receipt.
+Cached receipts (printer offline)
+If the receipt printer is offline when a sale is closed, the receipt is saved to a print queue. Once the printer is back, a red badge appears on the printer icon — tap the icon and choose Print cached receipts.
+AT THE POS
+Returns and refunds
+Return against a receipt (recommended)
+	1	Tap the Return button (products in the receipt view now appear in red = return mode).
+	2	Scan the QR code on the customer's receipt, or type in the receipt number manually.
+	3	Pick the lines to return.
+	4	Fill in the Reason for return.
+	5	Tap Tender and pick how the customer should be refunded.
+Manual return (no receipt)
+	1	Tap Return.
+	2	Add the product being returned — or tap manual line if the product isn't in the catalogue.
+	3	Enter a reason for the return.
+	4	Complete the refund payment (cash or refund to card).
+IMPORTANT
+While in return mode, all prices show as negative. Tap the Return button again to exit return mode before starting a new regular sale.
+AT THE POS
+End of Day (EOD)
+At the end of the working day you reconcile the register — count cash, bank the deposit and confirm the totals.
+	1	Tap the EOD button in the sales view.
+	2	Count the cash in the drawer and enter the amount in Cash in register.
+	3	Enter the amount going to the bank under Deposit to bank.
+	4	Confirm the card payment total from the terminal's end-of-day report.
+	5	Tap Confirm — the system calculates whether it's a balance match or balance mismatch.
+TIP
+On a balance mismatch — double-check your count, and look for any untracked cash withdrawals or deposits during the day. The system logs the difference for audit purposes.
+X-report (snapshot during the day)
+You can pull an X-report at any time via Backoffice → Reports. It shows sales, returns, discounts and cash status up to the current moment without closing the day.
+ADMIN
+Backoffice in the POS
+The backoffice inside the POS app lets you manage products, stock, users and settings directly on the iPad. Many of the same functions also live in the web backoffice (wbo-etail.wallmob.com).
+Products & categories
+Add, edit and remove articles.
+→
+Stock management
+Top up, remove and count inventory.
+→
+Users
+Roles, PIN codes and permissions.
+→
+Reports
+X-reports and sales stats.
+→
+Navigating to Backoffice
+	1	Tap the Backoffice button in the top-left corner of the sales view.
+	2	You land on a menu view with every admin function: Home, Sale, KPI, Inventory, Stock, Reports, Users, Settings.
+	3	Tap the Sales window button at the top to go back to the register.
+ADMIN
+Products and categories
+Add a new product
+	1	Go to Backoffice → Inventory → Products and tap the plus icon (+).
+	2	Enter a name, description, purchase price excl. VAT and sales price incl. VAT.
+	3	Enter the stock level.
+	4	(Optional) Add variants — e.g. size or color.
+	5	(Optional) Assign the product to one or more categories under Add categories.
+	6	(Optional) Add a product image.
+	7	Tap Add product.
+Edit or delete a product
+Tap the pencil icon to the right of a product to open edit mode. To delete the product entirely, tap the red Remove button.
+NOTE
+When you delete a product, it disappears from every store that had it in the catalogue. If the product has sales history, we recommend archiving it instead.
+Categories
+Create categories via Backoffice → Inventory → Categories → Add category. Categories can be multi-level — pick an existing category as the Top-category when creating a sub-category.
+ADMIN
+Stock management
+Add to stock
+	1	Go to Backoffice → Stock → Add to stock.
+	2	Tap the plus icon, pick a category and product.
+	3	Tap the pencil icon and enter the quantity to add.
+	4	Confirm. You can enter a Reference ID and description (e.g. a supplier invoice number).
+Remove from stock
+Same procedure under the Remove from stock tab. Use it for shrinkage or internal consumption.
+Rolling count (single item)
+Under Count stock you can count a single product and set the actual balance. Good for ongoing spot checks during the day.
+Full inventory count
+	1	Go to Stocks → Stock in the GO CTRL app and pick the right stock location.
+	2	Go to Inventory counts and tap Open a new, full item count.
+	3	Pick store and currency, then tap Create item count.
+	4	Each team member signs in on their device and picks Full items count → Participate in a full item count.
+	5	Split responsibility between shelves/areas so everything gets counted exactly once.
+	6	Scan or search each article and enter the quantity.
+	7	When everyone is done — swipe left on the count and tap Send, confirm with Submit and close.
+	8	Open the web backoffice → Item count → Products. Check counted vs. uncounted products.
+	9	Tap Update item count, then go to Details and tap Close.
+NOTE
+Counting while the store is open isn't supported by the automation. If you count mid-day, follow up with a rolling count and pull a sales report for the period.
+ADMIN
+Users and permissions
+Manage who can do what at the register. There are three roles by default: Management, Owner and Staff.
+Add a user
+	1	Go to Backoffice → Users → Add user.
+	2	Enter a name and email address.
+	3	Pick a role via Attach role.
+	4	Recommended: set a PIN code for quick sign-in at the register.
+	5	(Optional) Add a profile picture.
+	6	Tap Add user.
+Edit what a role can do
+Go to Users → Permission. Here you can set Staff so they can't process returns, view sales history, or edit products.
+TIP
+Cashiers who often get asked for receipt copies need permission to view Orders/Sales history. Check this first when troubleshooting.
+ADMIN
+Reports
+X-report
+An X-report is a snapshot of the day's sales and cash status without closing the day. Includes among other things:
+	•	Products sold
+	•	Products returned
+	•	Cash drawer openings
+	•	Cash in register
+	•	Discount totals
+Pulled via Backoffice → Reports → X-reports and can be printed on the receipt printer.
+Sales stats
+Under Home → Sale you'll find revenue per hour, day, week and month as charts. Filter by any period with the Date button.
+KPI
+Under KPI you'll find the average basket size and margin per product — handy for quickly spotting what's making the most money.
+HARDWARE
+Recommended hardware
+Sweetspot POS works with a wide range of equipment. Here's what we recommend — reach out to support if you're unsure what fits your setup.
+iPad and iPhone
+iPad
+iPadOS 13 or later
+All modern iPads work — a newer model gives the best performance, especially when scanning and taking payment simultaneously.
+iPhone
+iOS 13 or later
+Used for mobile POS and for the ExtendaGO CTRL app (stock, counts).
+Receipt printers
+Star mC-Print3
+LAN + USB hub
+The standard choice. Supports cash drawer, scanner and customer display from a single unit.
+Star mPOP
+Printer + cash drawer
+Combined unit. Compact option for smaller registers.
+Epson TM-T88VI
+BT / LAN / WiFi
+Fast printer (300mm/s) for high-volume stores.
+Star TSP143IIIU
+USB
+Budget-friendly — doesn't support every scanner though.
+Seiko RP-F10
+USB / USB-C / BT
+Compact design, IPx1 splash rating on some models.
+Card terminals
+Sweetspot POS uses Adyen as payment acquirer. The following Adyen terminals are supported.
+Adyen V400m
+Ethernet / WiFi
+Stationary countertop terminal. The most common choice for traditional registers.
+Adyen V400C
+WiFi
+Compact stationary terminal — fits tight counter spaces.
+Adyen NYC1
+Bluetooth (BLE)
+Handheld cordless terminal with long battery life. Great for mobile use on the floor.
+Scanners
+Zebra DS9208 / DS9308
+USB
+2D counter scanner. High speed; requires Star mC-Print3 when using USB pass-through.
+Zebra CS4070 / CS6080
+Bluetooth 2D
+For mobile use — e.g. on the sales floor.
+Socket Mobile S700 / S820
+Bluetooth
+S700 for the counter, S820 for mobile use.
+Other
+Cash drawer (APG Entry Level)
+Connects through the printer. No direct connection to the iPad needed.
+Customer display Star SCD222
+Requires Star mC-Print3. USB connection.
+Label printer Zebra ZD421 / GK420
+Used with the ExtendaGO app for price labels.
+CONFIGURE PRINTERS & TERMINALS
+Go to
+BACKOFFICE → SETTINGS → PRINTER
+or
+SETTINGS → TERMINALS
+to connect the equipment. Pick the right connection type (Bluetooth or WiFi) for your Adyen terminal.
+INTEGRATIONS
+Integrations
+Sweetspot POS can connect to a range of external services. Here are the most common ones.
+Service
+Used for
+Guide
+Visma eAccounting
+Automatic accounting of sales
+Setup guide ↗
+Shopify
+Web shop ↔ POS sync
+Setup guide ↗
+WooCommerce
+Web shop ↔ POS sync
+Setup guide ↗
+Sharespine
+Accounting-system connector
+Setup guide ↗
+GBAT10
+Receipt reporting (fiscal)
+Mapping ↗
+THINKING ABOUT CONNECTING SOMETHING ELSE?
+Get in touch with support — we have experience with more integrations than the ones listed here.
+FAQ
+Common questions
+Quick answers to questions we often get from customers. Can't find what you're looking for? Use the search bar above or contact support.
+
+DEEP DIVES
+PDF manuals for deep dives
+Need a more exhaustive reference? These PDFs are the official manuals that underpin most of the content here.
+POS Manual — Sales and use of registers
+Open PDF ↗
+POS Manual — Backoffice in the POS
+Open PDF ↗
+Backoffice (web) — features
+Open PDF ↗
+Backoffice — parameters
+Open PDF ↗
+Inventory guide
+Open PDF ↗
+Gift cards, Voucher, Discounts & Campaigns
+Open PDF ↗
+Hardware recommendations
+Open PDF ↗
+Release notes (latest versions)
+Open page ↗
+SUPPORT
+Get in touch
+Couldn't find the answer you needed? We always reply as quickly as we can.
+💬 Chat with us
+The fastest route — the chat lives in our backoffice when you're signed in.
+Open backoffice →
+✉️ Email
+Send your request to hello@sweetspot.io — we usually reply within one business day.
+Write to us →
+⚙️ Service status
+Is something down? Check the public status page.
+View status →
+
+Sweetspot POS
+Help center for our point-of-sale system. Content is updated continuously — let us know if anything's missing!
+QUICK LINKS
+Get started
+Receipts & reprints
+Hardware
+Integrations
+FAQ
+CONTACT
+hello@sweetspot.io
+Chat in backoffice ↗
+Service status ↗
+sweetspot.io ↗
